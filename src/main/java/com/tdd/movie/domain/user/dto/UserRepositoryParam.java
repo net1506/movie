@@ -14,4 +14,9 @@ public class UserRepositoryParam {
 
     }
 
+    public record GetUserByIdParam(
+            Long id
+    ) {
+
+    }
 }

@@ -13,6 +13,12 @@ public class UserControllerDto {
 
     }
 
+    public record ChargeWalletRequest(
+            Integer amount
+    ) {
+
+    }
+
     public record WalletResponse(
             @Schema(description = "지갑 ID", example = "1")
             Long id,

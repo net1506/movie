@@ -4,6 +4,7 @@ import com.tdd.movie.domain.user.model.User;
 import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.infra.db.user.UserJpaRepository;
 import com.tdd.movie.infra.db.user.WalletJpaRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,5 +57,22 @@ class UserFacadeTest {
         // then
         assertThat(wallet).isNotNull();
         assertThat(wallet.getUserId()).isEqualTo(userId);
+    }
+
+    @Test
+    @DisplayName("사용자 지갑 충전 성공")
+    public void shouldChargeUserWalletAmount() throws Exception {
+        // given
+        User savedUser = userJpaRepository.save(User.builder().name("user -").build());
+        Wallet savedWallet = walletJpaRepository.save(Wallet.builder().userId(savedUser.getId()).amount(0).build());
+        int amount = 1000;
+
+        // when
+        Wallet wallet = userFacade.chargeUserWalletAmount(savedUser.getId(), savedWallet.getId(), amount);
+
+        // then
+        Assertions.assertThat(wallet).isNotNull();
+        assertThat(wallet.getUserId()).isEqualTo(savedUser.getId());
+        assertThat(wallet.getAmount()).isEqualTo(amount);
     }
 }

@@ -2,7 +2,8 @@ package com.tdd.movie.domain.user.service;
 
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.domain.support.error.ErrorType;
-import com.tdd.movie.domain.user.dto.UserQuery.GetUserWalletByUserIdQuery;
+import com.tdd.movie.domain.user.dto.UserQuery.GetUserByIdQuery;
+import com.tdd.movie.domain.user.dto.UserQuery.GetWalletByUserIdQuery;
 import com.tdd.movie.domain.user.model.User;
 import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.infra.db.user.UserJpaRepository;
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.stream.IntStream;
 
 import static com.tdd.movie.domain.support.error.ErrorType.User.USER_ID_MUST_NOT_BE_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,18 +31,17 @@ class UserQueryServiceTest {
     @Autowired
     private UserJpaRepository userJpaRepository;
 
-
     @BeforeEach
     public void setUp() {
-        walletJpaRepository.deleteAll();
         userJpaRepository.deleteAll();
+        walletJpaRepository.deleteAll();
 
-        IntStream.range(0, 10)
-                .mapToObj(i -> userJpaRepository.save(User.builder()
-                        .id((long) (i + 1))
-                        .name("user -" + i + 1)
-                        .build()))
-                .toList();
+//        IntStream.range(0, 10)
+//                .mapToObj(i -> userJpaRepository.save(User.builder()
+//                        .id((long) (i + 1))
+//                        .name("user -" + i + 1)
+//                        .build()))
+//                .toList();
     }
 
     @Test
@@ -53,7 +51,7 @@ class UserQueryServiceTest {
         Long userId = null;
 
         // when
-        CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userQueryService.getWallet(new GetUserWalletByUserIdQuery(userId)));
+        CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userQueryService.getWallet(new GetWalletByUserIdQuery(userId)));
 
         // then
         assertThat(coreException.getErrorType()).isEqualTo(USER_ID_MUST_NOT_BE_NULL);
@@ -67,7 +65,7 @@ class UserQueryServiceTest {
         Long userId = 1L;
 
         // when
-        CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userQueryService.getWallet(new GetUserWalletByUserIdQuery(userId)));
+        CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userQueryService.getWallet(new GetWalletByUserIdQuery(userId)));
 
         // then
         assertThat(coreException.getErrorType()).isEqualTo(ErrorType.User.WALLET_NOT_FOUND);
@@ -83,12 +81,40 @@ class UserQueryServiceTest {
         walletJpaRepository.save(Wallet.builder().id(1L).userId(userId).amount(1000).build());
 
         // when
-        Wallet wallet = userQueryService.getWallet(new GetUserWalletByUserIdQuery(userId));
+        Wallet wallet = userQueryService.getWallet(new GetWalletByUserIdQuery(userId));
 
         // then
         assertThat(wallet).isNotNull();
         assertThat(wallet.getUserId()).isEqualTo(userId);
         assertThat(wallet.getAmount()).isEqualTo(1000);
+    }
+
+    @Test
+    @DisplayName("사용자 조회 테스트 실패 - 사용자가 존재하지 않는 경우")
+    public void shouldThrowExceptionWhenUserNotFound() throws Exception {
+        // given
+        Long userId = 1L;
+
+        // when
+        CoreException coreException = Assertions.assertThrows(CoreException.class, () -> userQueryService.getUser(new GetUserByIdQuery(userId)));
+
+        // then
+        assertThat(coreException.getErrorType()).isEqualTo(ErrorType.User.USER_NOT_FOUND);
+        assertThat(coreException.getMessage()).isEqualTo(ErrorType.User.USER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자 조회 테스트 성공")
+    public void shouldGetUserByIdQuery() throws Exception {
+        // given
+        User savedUser = userJpaRepository.save(User.builder().name("user -").build());
+
+        // when
+        User user = userQueryService.getUser(new GetUserByIdQuery(savedUser.getId()));
+
+        // then
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(savedUser.getId());
     }
 
 }

@@ -17,11 +17,21 @@ public class UserQuery {
         }
     }
 
-    public record GetUserWalletByUserIdQuery(
+    public record GetWalletByUserIdQuery(
             Long userId
     ) {
-        public GetUserWalletByUserIdQuery {
+        public GetWalletByUserIdQuery {
             if (userId == null) {
+                throw new CoreException(USER_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
+
+    public record GetUserByIdQuery(
+            Long id
+    ) {
+        public GetUserByIdQuery {
+            if (id == null) {
                 throw new CoreException(USER_ID_MUST_NOT_BE_NULL);
             }
         }
