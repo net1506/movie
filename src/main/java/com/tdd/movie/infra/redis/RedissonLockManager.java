@@ -78,6 +78,7 @@ public class RedissonLockManager implements LockManager {
             // 2. 다른 프로세스(쓰레드)가 이미 이 락을 점유하고 있으면 WAIT_TIME 만큼 대기.
             // 3. 기다리는 동안 락이 해제되면, 락을 획득하고 LEASE_TIME 동안 유지.
             // 4. 만약 WAIT_TIME 이 지나도 락을 획득하지 못하면 false 반환 (즉, 타임아웃 발생).
+            printLockStatus(rLock, lockName);
             boolean available = rLock.tryLock(WAIT_TIME, LEASE_TIME, TIME_UNIT);
 
             // 락 획득 실패 시 예외 발생
@@ -97,4 +98,14 @@ public class RedissonLockManager implements LockManager {
             }
         }
     }
+
+    public void printLockStatus(RLock rLock, String lockName) {
+        if (rLock.isLocked()) {
+            System.out.println("🔒 이미 다른 프로세스가 락을 잡고 있음: " + lockName);
+        } else {
+            System.out.println("✅ 락이 현재 사용되지 않음: " + lockName);
+        }
+    }
+
+
 }
