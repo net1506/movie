@@ -1,5 +1,7 @@
 package com.tdd.movie.application;
 
+import com.tdd.movie.domain.support.DistributedLockType;
+import com.tdd.movie.domain.support.annotaion.DistributedLock;
 import com.tdd.movie.domain.user.dto.UserCommand.ChargeUserWalletAmountByWalletIdCommand;
 import com.tdd.movie.domain.user.dto.UserQuery.GetUserByIdQuery;
 import com.tdd.movie.domain.user.dto.UserQuery.GetUserWalletByIdQuery;
@@ -25,6 +27,7 @@ public class UserFacade {
         );
     }
 
+    @DistributedLock(type = DistributedLockType.USER_WALLET, keys = "userId")
     public Wallet chargeUserWalletAmount(Long userId, Long walletId, Integer amount) {
         // 사용자 조회
         User user = userQueryService.getUser(new GetUserByIdQuery(userId));
@@ -34,6 +37,14 @@ public class UserFacade {
 
         // 지갑의 소유자를 확인한다.
         wallet.validateWalletOwner(user.getId());
+
+//      이렇게 하면 Redisson 으로 만들어진 락을 확인 할 수 있다.
+//      락이 해제된 후 자동으로 redis 에서 삭제된다.
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
         // 지갑 충전
         userCommandService.chargeUserWalletAmount(new ChargeUserWalletAmountByWalletIdCommand(wallet.getId(), amount));

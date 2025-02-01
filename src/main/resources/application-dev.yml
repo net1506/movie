@@ -18,3 +18,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: ${JPA_FORMAT_SQL:false}
         highlight_sql: ${JPA_HIGHLIGHT_SQL:false}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
