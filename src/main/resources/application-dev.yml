@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: movie
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}/${DB_NAME:movie}?characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: ${JPA_SHOW_SQL:false}
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:create-drop}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: ${JPA_FORMAT_SQL:false}
+        highlight_sql: ${JPA_HIGHLIGHT_SQL:false}

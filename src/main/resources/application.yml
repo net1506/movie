@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+    include: swagger
+  application:
+    name: movie
+
+server:
+  port: 8080
