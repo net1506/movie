@@ -19,6 +19,7 @@ import java.util.List;
 public class MovieFacade {
 
     private final MovieQueryService movieQueryService;
+    
     private final TheaterQueryService theaterQueryService;
 
     public List<Movie> getPlayingMovies(LocalDate date) {
