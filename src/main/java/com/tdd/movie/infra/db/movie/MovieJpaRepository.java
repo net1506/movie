@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface MovieJpaRepository extends JpaRepository<Movie, Long> {
 
-    @Query("SELECT m FROM Movie m WHERE m.screeningStartDate >= :now AND m.screeningEndDate <= :now")
-    List<Movie> findAllByScreeningPeriod(LocalDate now);
+    @Query("SELECT m FROM Movie m WHERE m.screeningStartDate <= :date AND m.screeningEndDate >= :date")
+    List<Movie> findAllByScreeningPeriod(LocalDate date);
 
-    @Query("SELECT m FROM Movie m WHERE m.screeningStartDate > :now")
-    List<Movie> findAllByScreeningStartDateAfter(LocalDate now);
+    @Query("SELECT m FROM Movie m WHERE m.screeningStartDate > :date")
+    List<Movie> findAllByScreeningStartDateAfter(LocalDate date);
 }

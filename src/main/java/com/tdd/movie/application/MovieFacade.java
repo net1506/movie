@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -19,7 +20,7 @@ import java.util.List;
 public class MovieFacade {
 
     private final MovieQueryService movieQueryService;
-    
+
     private final TheaterQueryService theaterQueryService;
 
     public List<Movie> getPlayingMovies(LocalDate date) {
@@ -39,6 +40,11 @@ public class MovieFacade {
         List<Long> distinctTheaterIds = theaterQueryService.getDistinctTheaterIds(
                 new GetDistinctTheaterIdsByMovieId(movieId)
         );
+
+        // 조회된 영화관 목록이 없는 경우
+        if (distinctTheaterIds == null || distinctTheaterIds.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         return theaterQueryService.getTheaters(
                 new GetTheatersByIds(distinctTheaterIds)

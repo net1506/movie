@@ -81,8 +81,8 @@ public enum ErrorType implements IErrorType {
         MOVIE_SEAT_ID_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "영화 좌석 ID는 null일 수 없습니다.",
                 LogLevel.WARN),
 
-        SCREEN_DATE_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "상영 날짜는 null일 수 없습니다.", LogLevel.WARN),
-        INVALID_DATE_MUST_BE_FUTURE(ErrorCode.BAD_REQUEST, "상영 날짜는 현재 날짜 이후여야 합니다.", LogLevel.WARN),
+        SCREENING_DATE_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "상영 날짜는 null일 수 없습니다.", LogLevel.WARN),
+        INVALID_SCREENING_DATE(ErrorCode.BAD_REQUEST, "유효하지 않은 상영 날짜 입니다.", LogLevel.WARN),
 
         RESERVATION_ID_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "예약 ID는 null일 수 없습니다.", LogLevel.WARN),
         INVALID_MINUTES_BEFORE_RESERVATION_START_AT(ErrorCode.BAD_REQUEST, "예약 시작 시간 전의 분은 유효하지 않습니다.",
@@ -124,6 +124,7 @@ public enum ErrorType implements IErrorType {
         RESERVATION_ALREADY_CANCELED(ErrorCode.BAD_REQUEST, "이미 취소된 예약입니다.", LogLevel.WARN),
         RESERVATION_USER_NOT_MATCHED(ErrorCode.BAD_REQUEST, "예약 사용자가 일치하지 않습니다.", LogLevel.WARN),
         THEATER_ID_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "영화관 ID는 null일 수 없습니다.", LogLevel.WARN),
+        THEATER_ID_MUST_NOT_BE_EMPTY(ErrorCode.BAD_REQUEST, "영화관 ID는 빈 값일 수 없습니다.", LogLevel.WARN),
         THEATER_SCHEDULE_ID_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "영화관 스케줄 ID는 null일 수 없습니다.",
                 LogLevel.WARN),
         THEATER_SEAT_ID_MUST_NOT_BE_NULL(ErrorCode.BAD_REQUEST, "영화관 좌석 ID는 null일 수 없습니다.",

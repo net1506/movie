@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface TheaterScheduleJpaRepository extends JpaRepository<TheaterSchedule, Long> {
-    @Query("SELECT ts.id FROM TheaterSchedule ts WHERE ts.movieId = :movieId")
+    @Query("SELECT DISTINCT ts.theaterId FROM TheaterSchedule ts WHERE ts.movieId = :movieId")
     List<Long> findDistinctTheaterIdsByMovieId(Long movieId);
 }
