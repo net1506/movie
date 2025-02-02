@@ -12,10 +12,12 @@ spring:
   jpa:
     show-sql: ${JPA_SHOW_SQL:false}
     hibernate:
-      ddl-auto: ${JPA_DDL_AUTO:create-drop}
+      ddl-auto: ${JPA_DDL_AUTO:create}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         format_sql: ${JPA_FORMAT_SQL:false}
         highlight_sql: ${JPA_HIGHLIGHT_SQL:false}
   data:

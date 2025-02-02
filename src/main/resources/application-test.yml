@@ -17,6 +17,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         show_sql: false # SQL 쿼리 출력 여부
         format_sql: false # SQL 쿼리 포맷팅 여부
   data:
