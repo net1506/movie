@@ -19,12 +19,14 @@ public class MovieRepositoryImpl implements MovieRepository {
     @Override
     public List<Movie> findMovies(FindMoviesByDatePeriodParam param) {
         return movieJpaRepository.findAllByScreeningPeriod(
-                param.date()
+                param.screeningDate()
         );
     }
 
     @Override
     public List<Movie> findMovies(FindMoviesByDateAfterParam param) {
-        return movieJpaRepository.findAllByScreeningStartDateAfter(param.date());
+        return movieJpaRepository.findAllByScreeningStartDateAfter(
+                param.screeningDate()
+        );
     }
 }

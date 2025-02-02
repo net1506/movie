@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class MovieRepositoryParam {
 
     public record FindMoviesByDatePeriodParam(
-            LocalDate date
+            LocalDate screeningDate
     ) {
 
     }
@@ -17,7 +17,7 @@ public class MovieRepositoryParam {
     }
 
     public record FindMoviesByDateAfterParam(
-            LocalDate date
+            LocalDate screeningDate
     ) {
 
     }

@@ -21,10 +21,10 @@ public class MovieQueryService {
     private final MovieRepository movieRepository;
 
     public List<Movie> getMovies(GetMoviesByDatePeriodQuery query) {
-        return movieRepository.findMovies(new FindMoviesByDatePeriodParam(query.date()));
+        return movieRepository.findMovies(new FindMoviesByDatePeriodParam(query.screeningDate()));
     }
 
     public List<Movie> getMovies(GetMoviesByDateAfterQuery query) {
-        return movieRepository.findMovies(new FindMoviesByDateAfterParam(query.date()));
+        return movieRepository.findMovies(new FindMoviesByDateAfterParam(query.screeningDate()));
     }
 }
