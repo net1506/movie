@@ -8,6 +8,16 @@ import static com.tdd.movie.domain.support.error.ErrorType.Movie.*;
 
 public class MovieQuery {
 
+    public record GetMovieByIdQuery(
+            Long movieId
+    ) {
+        public GetMovieByIdQuery {
+            if (movieId == null) {
+                throw new CoreException(MOVIE_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
+
     public record GetScreeningTheatersByMovieIdQuery(
             Long movieId
     ) {

@@ -2,6 +2,7 @@ package com.tdd.movie.application;
 
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindPlayingMoviesByDatePeriodQuery;
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindUpcomingMoviesByDateAfterQuery;
+import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
 import com.tdd.movie.domain.theater.domain.Theater;
@@ -22,6 +23,10 @@ public class MovieFacade {
     private final MovieQueryService movieQueryService;
 
     private final TheaterQueryService theaterQueryService;
+
+    public Movie getMovie(Long movieId) {
+        return movieQueryService.getMovie(new GetMovieByIdQuery(movieId));
+    }
 
     public List<Movie> getPlayingMovies(LocalDate date) {
         return movieQueryService.findPlayingMovies(

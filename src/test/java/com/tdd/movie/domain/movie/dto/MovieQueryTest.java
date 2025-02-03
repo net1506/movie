@@ -2,6 +2,7 @@ package com.tdd.movie.domain.movie.dto;
 
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindPlayingMoviesByDatePeriodQuery;
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindUpcomingMoviesByDateAfterQuery;
+import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.support.error.CoreException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -10,12 +11,42 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static com.tdd.movie.domain.support.error.ErrorType.Movie.INVALID_SCREENING_DATE;
-import static com.tdd.movie.domain.support.error.ErrorType.Movie.SCREENING_DATE_MUST_NOT_BE_NULL;
+import static com.tdd.movie.domain.support.error.ErrorType.Movie.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("MovieQueryTest 단위 테스트")
 class MovieQueryTest {
+
+    @Nested
+    @DisplayName("GetMovieByIdQuery 생성자 테스트")
+    class GetMovieByIdQueryTest {
+        @Test
+        @DisplayName("생성자 생성 실패 - Id 가 NULL 인 경우")
+        public void shouldThrowExceptionWhenIdIsNull() {
+            // given
+            Long id = null;
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> new GetMovieByIdQuery(id));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(MOVIE_ID_MUST_NOT_BE_NULL);
+            assertThat(coreException.getMessage()).isEqualTo(MOVIE_ID_MUST_NOT_BE_NULL.getMessage());
+        }
+
+        @Test
+        @DisplayName("생성자 생성 성공")
+        public void shouldCreateGetMoviesByDatePeriodQuery() {
+            // given
+            Long id = 1L;
+
+            // when
+            GetMovieByIdQuery getMovieByIdQuery = new GetMovieByIdQuery(id);
+
+            // then
+            assertThat(getMovieByIdQuery.movieId()).isEqualTo(id);
+        }
+    }
 
     @Nested
     @DisplayName("GetMoviesByDatePeriodQuery 생성자 테스트")

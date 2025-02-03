@@ -2,6 +2,7 @@ package com.tdd.movie.domain.movie.service;
 
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindPlayingMoviesByDatePeriodQuery;
 import com.tdd.movie.domain.movie.dto.MovieQuery.FindUpcomingMoviesByDateAfterQuery;
+import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.infra.db.movie.MovieJpaRepository;
@@ -11,13 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.tdd.movie.domain.support.error.ErrorType.Movie.INVALID_SCREENING_DATE;
-import static com.tdd.movie.domain.support.error.ErrorType.Movie.SCREENING_DATE_MUST_NOT_BE_NULL;
+import static com.tdd.movie.domain.support.error.ErrorType.Movie.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("MovieQueryService 단윝 테스트")
+@DisplayName("MovieQueryService 단위 테스트")
 class MovieQueryServiceTest {
 
     @Autowired
@@ -29,6 +30,44 @@ class MovieQueryServiceTest {
     @BeforeEach
     public void setUp() {
         movieJpaRepository.deleteAll();
+    }
+
+    @Nested
+    @DisplayName("GetMovie 테스트")
+    class GetMovieTest {
+
+        @Test
+        @DisplayName("조회 실패 - 영화 ID 가 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenMovieIsNotFound() throws Exception {
+            // given
+            Long movieId = 1L;
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> movieQueryService.getMovie(new GetMovieByIdQuery(movieId)));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(MOVIE_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(MOVIE_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("조회 성공")
+        public void shouldGetMovie() throws Exception {
+            // given
+            List<Long> savedIds = saveDummyMovies();
+            List<String> expectedTitles = List.of("영화 A", "영화 B", "영화 C", "영화 D");
+
+            // when
+            // then
+            for (int i = 0; i < savedIds.size(); i++) {
+                Long savedId = savedIds.get(i);
+                Movie movie = movieQueryService.getMovie(new GetMovieByIdQuery(savedId));
+
+                // 검증: 저장된 순서와 동일한 타이틀을 가져오는지 확인
+                assertThat(movie.getTitle()).isEqualTo(expectedTitles.get(i));
+            }
+        }
+
     }
 
     @Nested
@@ -114,8 +153,8 @@ class MovieQueryServiceTest {
     }
 
     // 더미 데이터 저장
-    public void saveDummyMovies() {
-        movieJpaRepository.saveAll(List.of(
+    public List<Long> saveDummyMovies() {
+        List<Movie> movies = movieJpaRepository.saveAll(List.of(
                 Movie.builder()
                         .title("영화 A")
                         .screeningStartDate(LocalDate.now())
@@ -140,5 +179,7 @@ class MovieQueryServiceTest {
                         .screeningEndDate(LocalDate.now().plusDays(7))
                         .build()
         ));
+
+        return movies.stream().map(Movie::getId).collect(Collectors.toList());
     }
 }

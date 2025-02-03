@@ -8,6 +8,7 @@ import com.tdd.movie.interfaces.api.movie.IMovieController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,14 @@ import java.util.List;
 public class MovieController implements IMovieController {
 
     private final MovieFacade movieFacade;
+
+    @Override
+    @GetMapping("/{movieId}")
+    public ResponseEntity<GetMovieResponse> getMovie(@PathVariable Long movieId) {
+        Movie movie = movieFacade.getMovie(movieId);
+        MovieResponse response = new MovieResponse(movie);
+        return ResponseEntity.ok(new GetMovieResponse(response));
+    }
 
     @Override
     @GetMapping("/now-showing")
@@ -39,6 +48,7 @@ public class MovieController implements IMovieController {
         return ResponseEntity.ok(response);
     }
 
+    @Override
     @GetMapping("/coming-soon")
     public ResponseEntity<GetComingSoonMoviesResponse> getComingSoonMovies() {
         // 상영 예정 영화 목록 가져오기
@@ -57,7 +67,7 @@ public class MovieController implements IMovieController {
     }
 
     @Override
-    @GetMapping("/{movieId}/theaters")
+    @GetMapping("/{movieId}/available-theaters")
     public ResponseEntity<GetAvailableTheatersResponse> getAvailableTheaters(Long movieId) {
         List<Theater> screeningTheaters = movieFacade.getScreeningTheaters(movieId);
 

@@ -2,6 +2,7 @@ package com.tdd.movie.interfaces.api.movie;
 
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetAvailableTheatersResponse;
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetComingSoonMoviesResponse;
+import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetMovieResponse;
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetNowShowingMoviesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 
 @Tag(name = "User", description = "영화 API")
 public interface IMovieController {
+
+    @Operation(summary = "영화 조회", description = "영화를 조회합니다.")
+    ResponseEntity<GetMovieResponse> getMovie(Long movieId);
 
     @Operation(summary = "상영 중인 영화 조회", description = "상영중인 영화 목록을 조회합니다.")
     ResponseEntity<GetNowShowingMoviesResponse> getNowShowingMovies();

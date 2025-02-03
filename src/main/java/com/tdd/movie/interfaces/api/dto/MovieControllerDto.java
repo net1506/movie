@@ -9,6 +9,12 @@ import java.util.List;
 
 public class MovieControllerDto {
 
+    public record GetMovieResponse(
+            MovieResponse response
+    ) {
+
+    }
+
     public record GetNowShowingMoviesResponse(
             List<MovieResponse> responseList
     ) {

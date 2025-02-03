@@ -4,6 +4,12 @@ import java.time.LocalDate;
 
 public class MovieRepositoryParam {
 
+    public record GetMovieByIdParam(
+            Long id
+    ) {
+
+    }
+
     public record FindMoviesByDatePeriodParam(
             LocalDate screeningDate
     ) {
