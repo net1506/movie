@@ -11,10 +11,10 @@ import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_ID_MU
 
 public class TheaterQuery {
 
-    public record GetTheatersByIds(
+    public record FindTheatersByIds(
             List<Long> theaterIds
     ) {
-        public GetTheatersByIds {
+        public FindTheatersByIds {
             if (theaterIds == null) {
                 throw new CoreException(THEATER_ID_MUST_NOT_BE_NULL);
             }
@@ -25,10 +25,10 @@ public class TheaterQuery {
         }
     }
 
-    public record GetDistinctTheaterIdsByMovieId(
+    public record FindDistinctTheaterIdsByMovieId(
             Long movieId
     ) {
-        public GetDistinctTheaterIdsByMovieId {
+        public FindDistinctTheaterIdsByMovieId {
             if (movieId == null) {
                 throw new CoreException(MOVIE_ID_MUST_NOT_BE_NULL);
             }

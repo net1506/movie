@@ -40,31 +40,37 @@ Movie (영화)
 
 ## API 설계
 
-### 1. 사용자가 영화 목록 조회
+### 1. 현재 상영중인 영화 목록 조회
 
 ```
-GET /api/v1/movies
+GET /api/v1/movies/now-showing
 ```
 
-### 2. 사용자가 특정 영화의 상영 극장 조회
+### 2. 상영 예정 영화 목록 조회
+
+```
+GET /api/v1/movies/coming-soon
+```
+
+### 3. 사용자가 특정 영화의 상영 극장 조회
 
 ```
 GET /api/v1/movies/{movieId}/theaters
 ```
 
-### 3. 극장에서 해당 영화의 상영 일정 조회
+### 4. 극장에서 해당 영화의 상영 일정 조회
 
 ```
 GET /api/v1/theaters/{theaterId}/movies/{movieId}/available-schedules
 ```
 
-### 4. 선택한 상영 일정의 예약 가능한 좌석 조회
+### 5. 선택한 상영 일정의 예약 가능한 좌석 조회
 
 ```
 GET /api/v1/theater-schedules/{scheduleId}/available-seats
 ```
 
-### 5. 좌석 선택 후 예매 진행
+### 6. 좌석 선택 후 예매 진행
 
 ```
 POST /api/v1/theater-seats/{theaterSeatId}/reservations

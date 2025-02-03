@@ -39,10 +39,8 @@ public class MovieController implements IMovieController {
         return ResponseEntity.ok(response);
     }
 
-
-    @Override
-    @GetMapping("/upcoming")
-    public ResponseEntity<GetUpcomingMoviesResponse> getUpcomingMovies() {
+    @GetMapping("/coming-soon")
+    public ResponseEntity<GetComingSoonMoviesResponse> getComingSoonMovies() {
         // 상영 예정 영화 목록 가져오기
         List<Movie> upcomingMovies = movieFacade.getUpcomingMovies(LocalDateTime.now().toLocalDate());
 
@@ -52,7 +50,7 @@ public class MovieController implements IMovieController {
                 .toList();  // collect(Collectors.toList())
 
         // 응답 객체 생성
-        GetUpcomingMoviesResponse response = new GetUpcomingMoviesResponse(movieResponses);
+        GetComingSoonMoviesResponse response = new GetComingSoonMoviesResponse(movieResponses);
 
         // ResponseEntity 로 반환
         return ResponseEntity.ok(response);

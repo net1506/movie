@@ -18,20 +18,20 @@ public class MovieQuery {
         }
     }
 
-    public record GetMoviesByDatePeriodQuery(
+    public record FindPlayingMoviesByDatePeriodQuery(
             LocalDate screeningDate
     ) {
-        public GetMoviesByDatePeriodQuery {
+        public FindPlayingMoviesByDatePeriodQuery {
             if (screeningDate == null) {
                 throw new CoreException(SCREENING_DATE_MUST_NOT_BE_NULL);
             }
         }
     }
 
-    public record GetMoviesByDateAfterQuery(
+    public record FindUpcomingMoviesByDateAfterQuery(
             LocalDate screeningDate
     ) {
-        public GetMoviesByDateAfterQuery {
+        public FindUpcomingMoviesByDateAfterQuery {
             if (screeningDate == null) {
                 throw new CoreException(SCREENING_DATE_MUST_NOT_BE_NULL);
             }

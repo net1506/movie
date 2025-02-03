@@ -15,7 +15,7 @@ public class MovieControllerDto {
 
     }
 
-    public record GetUpcomingMoviesResponse(
+    public record GetComingSoonMoviesResponse(
             List<MovieResponse> responseList
     ) {
 

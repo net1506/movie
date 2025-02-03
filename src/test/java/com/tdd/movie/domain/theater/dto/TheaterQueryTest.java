@@ -18,7 +18,7 @@ class TheaterQueryTest {
 
     @Nested
     @DisplayName("GetTheatersByIds 생성자 테스트")
-    class GetTheatersByIdsTest {
+    class FindTheatersByIdsParamTest {
         @Test
         @DisplayName("생성자 생성 실패 - theaterIds 가 NULL 인 경우")
         public void shouldThrowExceptionWhenTheaterIdsIsNull() {
@@ -27,7 +27,7 @@ class TheaterQueryTest {
 
             // when
             CoreException coreException = Assertions.assertThrows(CoreException.class, () ->
-                    new TheaterQuery.GetTheatersByIds(theaterIds));
+                    new TheaterQuery.FindTheatersByIds(theaterIds));
 
             // then
             assertThat(coreException.getMessage()).isEqualTo(THEATER_ID_MUST_NOT_BE_NULL.getMessage());
@@ -41,7 +41,7 @@ class TheaterQueryTest {
 
             // when
             CoreException coreException = Assertions.assertThrows(CoreException.class, () ->
-                    new TheaterQuery.GetTheatersByIds(theaterIds));
+                    new TheaterQuery.FindTheatersByIds(theaterIds));
 
             // then
             assertThat(coreException.getMessage()).isEqualTo(THEATER_ID_MUST_NOT_BE_EMPTY.getMessage());
@@ -54,7 +54,7 @@ class TheaterQueryTest {
             List<Long> theaterIds = List.of(1L, 2L, 3L);
 
             // when
-            TheaterQuery.GetTheatersByIds query = new TheaterQuery.GetTheatersByIds(theaterIds);
+            TheaterQuery.FindTheatersByIds query = new TheaterQuery.FindTheatersByIds(theaterIds);
 
             // then
             assertThat(query.theaterIds()).isEqualTo(theaterIds);
@@ -63,7 +63,7 @@ class TheaterQueryTest {
 
     @Nested
     @DisplayName("GetDistinctTheaterIdsByMovieId 생성자 테스트")
-    class GetDistinctTheaterIdsByMovieIdTest {
+    class FindDistinctTheaterIdsByMovieIdTest {
         @Test
         @DisplayName("생성자 생성 실패 - movieId 가 NULL 인 경우")
         public void shouldThrowExceptionWhenMovieIdIsNull() {
@@ -72,7 +72,7 @@ class TheaterQueryTest {
 
             // when
             CoreException coreException = Assertions.assertThrows(CoreException.class, () ->
-                    new TheaterQuery.GetDistinctTheaterIdsByMovieId(movieId));
+                    new TheaterQuery.FindDistinctTheaterIdsByMovieId(movieId));
 
             // then
             assertThat(coreException.getMessage()).isEqualTo(MOVIE_ID_MUST_NOT_BE_NULL.getMessage());
@@ -85,7 +85,7 @@ class TheaterQueryTest {
             Long movieId = 1L;
 
             // when
-            TheaterQuery.GetDistinctTheaterIdsByMovieId query = new TheaterQuery.GetDistinctTheaterIdsByMovieId(movieId);
+            TheaterQuery.FindDistinctTheaterIdsByMovieId query = new TheaterQuery.FindDistinctTheaterIdsByMovieId(movieId);
 
             // then
             assertThat(query.movieId()).isEqualTo(movieId);

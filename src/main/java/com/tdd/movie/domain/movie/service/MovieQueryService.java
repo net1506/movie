@@ -1,8 +1,8 @@
 package com.tdd.movie.domain.movie.service;
 
 
-import com.tdd.movie.domain.movie.dto.MovieQuery.GetMoviesByDateAfterQuery;
-import com.tdd.movie.domain.movie.dto.MovieQuery.GetMoviesByDatePeriodQuery;
+import com.tdd.movie.domain.movie.dto.MovieQuery.FindPlayingMoviesByDatePeriodQuery;
+import com.tdd.movie.domain.movie.dto.MovieQuery.FindUpcomingMoviesByDateAfterQuery;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindMoviesByDateAfterParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindMoviesByDatePeriodParam;
 import com.tdd.movie.domain.movie.model.Movie;
@@ -20,11 +20,11 @@ public class MovieQueryService {
 
     private final MovieRepository movieRepository;
 
-    public List<Movie> getMovies(GetMoviesByDatePeriodQuery query) {
+    public List<Movie> findPlayingMovies(FindPlayingMoviesByDatePeriodQuery query) {
         return movieRepository.findMovies(new FindMoviesByDatePeriodParam(query.screeningDate()));
     }
 
-    public List<Movie> getMovies(GetMoviesByDateAfterQuery query) {
+    public List<Movie> findUpcomingMovies(FindUpcomingMoviesByDateAfterQuery query) {
         return movieRepository.findMovies(new FindMoviesByDateAfterParam(query.screeningDate()));
     }
 }

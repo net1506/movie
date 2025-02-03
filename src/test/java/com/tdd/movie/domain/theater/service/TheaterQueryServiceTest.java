@@ -3,8 +3,8 @@ package com.tdd.movie.domain.theater.service;
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.domain.theater.domain.Theater;
 import com.tdd.movie.domain.theater.domain.TheaterSchedule;
-import com.tdd.movie.domain.theater.dto.TheaterQuery.GetDistinctTheaterIdsByMovieId;
-import com.tdd.movie.domain.theater.dto.TheaterQuery.GetTheatersByIds;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieId;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.FindTheatersByIds;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;
 import org.junit.jupiter.api.*;
@@ -49,7 +49,7 @@ class TheaterQueryServiceTest {
             List<Long> threadIds = null;
 
             // when
-            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterQueryService.getTheaters(new GetTheatersByIds(threadIds)));
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterQueryService.findTheaters(new FindTheatersByIds(threadIds)));
 
             // then
             assertThat(coreException.getMessage()).isEqualTo(THEATER_ID_MUST_NOT_BE_NULL.getMessage());
@@ -63,7 +63,7 @@ class TheaterQueryServiceTest {
             List<Long> threadIds = new ArrayList<>();
 
             // when
-            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterQueryService.getTheaters(new GetTheatersByIds(threadIds)));
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterQueryService.findTheaters(new FindTheatersByIds(threadIds)));
 
             // then
             assertThat(coreException.getMessage()).isEqualTo(THEATER_ID_MUST_NOT_BE_EMPTY.getMessage());
@@ -77,7 +77,7 @@ class TheaterQueryServiceTest {
             List<Long> threadIds = List.of(1L, 2L, 3L);
 
             // when
-            List<Theater> theaters = theaterQueryService.getTheaters(new GetTheatersByIds(threadIds));
+            List<Theater> theaters = theaterQueryService.findTheaters(new FindTheatersByIds(threadIds));
 
             // then
             assertThat(theaters).hasSize(0);
@@ -97,7 +97,7 @@ class TheaterQueryServiceTest {
             List<Long> threadIds = List.of(savedTheater.getId());
 
             // when
-            List<Theater> theaters = theaterQueryService.getTheaters(new GetTheatersByIds(threadIds));
+            List<Theater> theaters = theaterQueryService.findTheaters(new FindTheatersByIds(threadIds));
 
             // then
             assertThat(theaters).hasSize(1);
@@ -116,7 +116,7 @@ class TheaterQueryServiceTest {
             Long movieId = 1L;
 
             // when
-            List<Long> distinctTheaterIds = theaterQueryService.getDistinctTheaterIds(new GetDistinctTheaterIdsByMovieId(movieId));
+            List<Long> distinctTheaterIds = theaterQueryService.findDistinctTheaterIds(new FindDistinctTheaterIdsByMovieId(movieId));
 
             // then
             assertThat(distinctTheaterIds).hasSize(0);
@@ -132,7 +132,7 @@ class TheaterQueryServiceTest {
             saveDummyTheaterSchedules();
 
             // when
-            List<Long> distinctTheaterIds = theaterQueryService.getDistinctTheaterIds(new GetDistinctTheaterIdsByMovieId(movieId));
+            List<Long> distinctTheaterIds = theaterQueryService.findDistinctTheaterIds(new FindDistinctTheaterIdsByMovieId(movieId));
 
             // then
             assertThat(distinctTheaterIds).hasSize(2);
@@ -142,13 +142,13 @@ class TheaterQueryServiceTest {
             Long theaterId = 101L;
 
             // when 2
-            List<Long> distinctTheaterIds2 = theaterQueryService.getDistinctTheaterIds(new GetDistinctTheaterIdsByMovieId(movieId2));
+            List<Long> distinctTheaterIds2 = theaterQueryService.findDistinctTheaterIds(new FindDistinctTheaterIdsByMovieId(movieId2));
 
             // then 2
             assertThat(distinctTheaterIds2).hasSize(1);
         }
     }
-    
+
     // 더미 데이터 입력
     public void saveDummyTheaterSchedules() {
         theaterScheduleJpaRepository.saveAll(List.of(

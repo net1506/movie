@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TheaterRepositoryParam {
 
-    public record FindTheatersByIds(
+    public record FindTheatersByIdsParam(
             List<Long> theaterIds
     ) {
 

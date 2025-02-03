@@ -1,8 +1,8 @@
 package com.tdd.movie.interfaces.api.movie;
 
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetAvailableTheatersResponse;
+import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetComingSoonMoviesResponse;
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetNowShowingMoviesResponse;
-import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetUpcomingMoviesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +15,7 @@ public interface IMovieController {
     ResponseEntity<GetNowShowingMoviesResponse> getNowShowingMovies();
 
     @Operation(summary = "상영 예정 영화 조회", description = "상영예정 영화 목록을 조회합니다.")
-    ResponseEntity<GetUpcomingMoviesResponse> getUpcomingMovies();
+    ResponseEntity<GetComingSoonMoviesResponse> getComingSoonMovies();
 
     @Operation(summary = "상영 가능한 영화관 조회", description = "상영 가능한 영화관 목록을 조회합니다.")
     ResponseEntity<GetAvailableTheatersResponse> getAvailableTheaters(
