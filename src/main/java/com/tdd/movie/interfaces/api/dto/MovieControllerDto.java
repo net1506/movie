@@ -10,25 +10,25 @@ import java.util.List;
 public class MovieControllerDto {
 
     public record GetMovieResponse(
-            MovieResponse response
+            MovieResponse movie
     ) {
 
     }
 
     public record GetNowShowingMoviesResponse(
-            List<MovieResponse> responseList
+            List<MovieResponse> movies
     ) {
 
     }
 
     public record GetComingSoonMoviesResponse(
-            List<MovieResponse> responseList
+            List<MovieResponse> movies
     ) {
 
     }
 
     public record GetAvailableTheatersResponse(
-            List<TheaterResponse> responseList
+            List<TheaterResponse> theaters
     ) {
 
     }

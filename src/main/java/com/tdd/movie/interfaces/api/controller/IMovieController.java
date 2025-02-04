@@ -1,4 +1,4 @@
-package com.tdd.movie.interfaces.api.movie;
+package com.tdd.movie.interfaces.api.controller;
 
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetAvailableTheatersResponse;
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.GetComingSoonMoviesResponse;

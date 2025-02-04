@@ -11,10 +11,20 @@ import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_ID_MU
 
 public class TheaterQuery {
 
-    public record FindTheatersByIds(
+    public record GetTheaterByIdQuery(
+            Long theaterId
+    ) {
+        public GetTheaterByIdQuery {
+            if (theaterId == null) {
+                throw new CoreException(THEATER_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
+
+    public record FindTheatersByIdsQuery(
             List<Long> theaterIds
     ) {
-        public FindTheatersByIds {
+        public FindTheatersByIdsQuery {
             if (theaterIds == null) {
                 throw new CoreException(THEATER_ID_MUST_NOT_BE_NULL);
             }
@@ -25,14 +35,28 @@ public class TheaterQuery {
         }
     }
 
-    public record FindDistinctTheaterIdsByMovieId(
+    public record FindDistinctTheaterIdsByMovieIdQuery(
             Long movieId
     ) {
-        public FindDistinctTheaterIdsByMovieId {
+        public FindDistinctTheaterIdsByMovieIdQuery {
             if (movieId == null) {
                 throw new CoreException(MOVIE_ID_MUST_NOT_BE_NULL);
             }
         }
     }
 
+    public record FindReservableTheaterSchedulesQuery(
+            Long theaterId,
+            Long movieId
+    ) {
+        public FindReservableTheaterSchedulesQuery {
+            if (theaterId == null) {
+                throw new CoreException(THEATER_ID_MUST_NOT_BE_NULL);
+            }
+            
+            if (movieId == null) {
+                throw new CoreException(MOVIE_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
 }

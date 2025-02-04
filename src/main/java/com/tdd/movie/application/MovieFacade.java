@@ -6,8 +6,8 @@ import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
 import com.tdd.movie.domain.theater.domain.Theater;
-import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieId;
-import com.tdd.movie.domain.theater.dto.TheaterQuery.FindTheatersByIds;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieIdQuery;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.FindTheatersByIdsQuery;
 import com.tdd.movie.domain.theater.service.TheaterQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ public class MovieFacade {
     public List<Theater> getScreeningTheaters(Long movieId) {
         // 영화 코드로 영화관 목록 조회
         List<Long> distinctTheaterIds = theaterQueryService.findDistinctTheaterIds(
-                new FindDistinctTheaterIdsByMovieId(movieId)
+                new FindDistinctTheaterIdsByMovieIdQuery(movieId)
         );
 
         // 조회된 영화관 목록이 없는 경우
@@ -52,7 +52,7 @@ public class MovieFacade {
         }
 
         return theaterQueryService.findTheaters(
-                new FindTheatersByIds(distinctTheaterIds)
+                new FindTheatersByIdsQuery(distinctTheaterIds)
         );
     }
 }

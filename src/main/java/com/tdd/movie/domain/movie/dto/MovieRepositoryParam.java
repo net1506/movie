@@ -1,6 +1,7 @@
 package com.tdd.movie.domain.movie.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MovieRepositoryParam {
 
@@ -24,6 +25,14 @@ public class MovieRepositoryParam {
 
     public record FindMoviesByDateAfterParam(
             LocalDate screeningDate
+    ) {
+
+    }
+
+    public record FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam(
+            Long movieId,
+            Long theaterId,
+            LocalDateTime now
     ) {
 
     }

@@ -1,11 +1,11 @@
-package com.tdd.movie.interfaces.api.user.impl;
+package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.UserFacade;
 import com.tdd.movie.domain.user.model.Wallet;
+import com.tdd.movie.interfaces.api.controller.IUserController;
 import com.tdd.movie.interfaces.api.dto.UserControllerDto.ChargeWalletRequest;
 import com.tdd.movie.interfaces.api.dto.UserControllerDto.GetWalletResponse;
 import com.tdd.movie.interfaces.api.dto.UserControllerDto.WalletResponse;
-import com.tdd.movie.interfaces.api.user.IUserController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

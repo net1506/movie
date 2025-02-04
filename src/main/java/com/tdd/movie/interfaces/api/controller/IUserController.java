@@ -1,4 +1,4 @@
-package com.tdd.movie.interfaces.api.user;
+package com.tdd.movie.interfaces.api.controller;
 
 import com.tdd.movie.interfaces.api.dto.UserControllerDto.ChargeWalletRequest;
 import com.tdd.movie.interfaces.api.dto.UserControllerDto.GetWalletResponse;
