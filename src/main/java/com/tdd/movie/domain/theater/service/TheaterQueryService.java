@@ -46,8 +46,8 @@ public class TheaterQueryService {
     public List<TheaterSchedule> findReservableTheaterSchedules(FindReservableTheaterSchedulesQuery query) {
         return theaterRepository.findAllTheaterSchedules(
                 new FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam(
-                        query.theaterId(),
                         query.movieId(),
+                        query.theaterId(),
                         now()
                 )
         );

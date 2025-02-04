@@ -174,11 +174,14 @@ class TheaterQueryServiceTest {
         public void shouldSuccessfullyGetTheater() throws Exception {
             // given
             List<Theater> theaters = saveDummyTheaters();
+            System.out.println("Dummy Theaters: " + theaters); // 👈 저장된 극장 정보 출력
             List<Long> theaterIds = theaters.stream()
                     .map(Theater::getId)
                     .toList();
 
             Long theaterId = theaterIds.get(0);
+
+            System.out.println("Theater ID: " + theaterId);
 
             // when
             Theater theater = theaterQueryService.getTheater(new GetTheaterByIdQuery(theaterId));

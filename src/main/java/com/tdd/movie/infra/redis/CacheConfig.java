@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.support.CacheName;
+import com.tdd.movie.domain.theater.domain.Theater;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,7 +70,7 @@ public class CacheConfig {
      * Redis 캐시 매니저를 생성하는 Bean.
      * <p>
      * - 기본적으로 Redis 를 캐시 저장소로 사용.
-     * - 특정 캐시(예: MOVIE)에 대해 별도의 TTL 과 직렬화 설정을 적용.
+     * - 특정 캐시(예: MOVIE, THEATER)에 대해 별도의 TTL 과 직렬화 설정을 적용.
      *
      * @param redisConnectionFactory Redis 연결 팩토리
      * @return RedisCacheManager 객체
@@ -94,6 +95,20 @@ public class CacheConfig {
                                 .serializeValuesWith(
                                         RedisSerializationContext.SerializationPair.fromSerializer(
                                                 new Jackson2JsonRedisSerializer(objectMapper, Movie.class))
+                                ) // 캐시 값을 JSON 형식으로 직렬화하여 저장
+                )
+                .withCacheConfiguration(
+                        CacheName.THEATER, // 🎯 추가된 부분: Theater 캐시 설정
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .disableCachingNullValues() // null 값은 캐시에 저장하지 않도록 설정
+                                .entryTtl(Duration.ofMinutes(2)) // 이 캐시의 TTL은 2분으로 설정 (2분 후 자동 삭제)
+                                .serializeKeysWith(
+                                        RedisSerializationContext.SerializationPair.fromSerializer(
+                                                new StringRedisSerializer())
+                                ) // Redis에서 key를 String 형태로 저장
+                                .serializeValuesWith(
+                                        RedisSerializationContext.SerializationPair.fromSerializer(
+                                                new Jackson2JsonRedisSerializer<>(objectMapper, Theater.class))
                                 ) // 캐시 값을 JSON 형식으로 직렬화하여 저장
                 )
                 .build();
