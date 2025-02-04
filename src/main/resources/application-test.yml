@@ -25,3 +25,10 @@ spring:
     redis:
       host: localhost
       port: 6379
+  cache:
+    type: redis
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG  # 실행되는 SQL 로그 출력
+    org.hibernate.orm.jdbc.bind: TRACE  # SQL 바인딩된 파라미터 값 출력

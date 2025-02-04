@@ -10,7 +10,7 @@ spring:
     password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    show-sql: ${JPA_SHOW_SQL:false}
+    show-sql: ${JPA_SHOW_SQL:true}
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:create}
     properties:
@@ -18,9 +18,16 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         naming:
           physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-        format_sql: ${JPA_FORMAT_SQL:false}
+        format_sql: ${JPA_FORMAT_SQL:true}
         highlight_sql: ${JPA_HIGHLIGHT_SQL:false}
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+
+logging:
+  level:
+    org.hibernate.SQL: ${LOGGING_LEVEL_SQL:DEBUG}  # 실행되는 SQL 로그 출력
+    org.hibernate.orm.jdbc.bind: ${LOGGING_LEVEL_BIND:TRACE}  # SQL 바인딩된 파라미터 값 출력

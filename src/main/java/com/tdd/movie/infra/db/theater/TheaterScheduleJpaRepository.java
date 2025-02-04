@@ -11,6 +11,6 @@ public interface TheaterScheduleJpaRepository extends JpaRepository<TheaterSched
     @Query("SELECT DISTINCT ts.theaterId FROM TheaterSchedule ts WHERE ts.movieId = :movieId")
     List<Long> findDistinctTheaterIdsByMovieId(Long movieId);
 
-    @Query("SELECT ts FROM TheaterSchedule ts WHERE ts.theaterId = :theaterId AND ts.movieId = :movieId AND ts.reservationStartAt <= :now AND TS.reservationEndAt >= :now")
+    @Query("SELECT ts FROM TheaterSchedule ts WHERE ts.theaterId = :theaterId AND ts.movieId = :movieId AND ts.reservationStartAt <= :now AND ts.reservationEndAt >= :now")
     List<TheaterSchedule> findByTheaterIdAndMovieIdAndReservationPeriod(Long theaterId, Long movieId, LocalDateTime now);
 }

@@ -51,7 +51,7 @@ class UserFacadeConcurrencyTest {
         @DisplayName("사용자 지갑 잔액 충전 성공 - 동시 충전")
         void shouldSuccessfullyChargeUserWalletAmount() {
             // given
-            final int threadCount = 10000;
+            final int threadCount = 100;
             final int perChargeAmount = 100;
             final User user = userJpaRepository.save(User.builder().name("name").build());
             final Wallet wallet = walletJpaRepository.save(

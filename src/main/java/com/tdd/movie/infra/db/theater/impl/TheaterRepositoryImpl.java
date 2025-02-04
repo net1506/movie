@@ -1,12 +1,14 @@
 package com.tdd.movie.infra.db.theater.impl;
 
+import com.tdd.movie.domain.movie.dto.MovieRepositoryParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindDistinctTheaterIdsByMovieIdParam;
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.domain.theater.domain.Theater;
 import com.tdd.movie.domain.theater.domain.TheaterSchedule;
-import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam;
+import com.tdd.movie.domain.theater.domain.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.FindTheatersByIdsParam;
+import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.GetTheaterByIdParam;
 import com.tdd.movie.domain.theater.repository.TheaterRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;
@@ -25,7 +27,7 @@ public class TheaterRepositoryImpl implements TheaterRepository {
     private final TheaterScheduleJpaRepository theaterScheduleJpaRepository;
 
     @Override
-    public Theater getTheater(TheaterRepositoryParam.GetTheaterByIdParam query) {
+    public Theater getTheater(GetTheaterByIdParam query) {
         return theaterJpaRepository.findById(query.theaterId())
                 .orElseThrow(() -> new CoreException(THEATER_NOT_FOUND));
     }
@@ -47,5 +49,10 @@ public class TheaterRepositoryImpl implements TheaterRepository {
                 param.movieId(),
                 param.now()
         );
+    }
+
+    @Override
+    public List<TheaterSeat> findAllTheaterSeats(MovieRepositoryParam.FindAllTheaterSeatsByScheduleIdAndIsReservedParam param) {
+        return List.of();
     }
 }

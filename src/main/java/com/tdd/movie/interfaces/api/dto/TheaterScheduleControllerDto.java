@@ -30,10 +30,10 @@ public class TheaterScheduleControllerDto {
             @Schema(description = "영화 상영 시간", example = "2025-02-10T14:30:00")
             LocalDateTime movieAt,
 
-            @Schema(description = "예약 시작 시간", example = "2025-02-05T00:00:00")
+            @Schema(description = "예매 시작 시간", example = "2025-02-05T00:00:00")
             LocalDateTime reservationStartAt,
 
-            @Schema(description = "예약 종료 시간", example = "2025-02-09T23:59:59")
+            @Schema(description = "예매 종료 시간", example = "2025-02-09T23:59:59")
             LocalDateTime reservationEndAt
     ) {
         public TheaterScheduleResponse(TheaterSchedule schedule) {
