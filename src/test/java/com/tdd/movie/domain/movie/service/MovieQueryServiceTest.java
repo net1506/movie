@@ -40,7 +40,7 @@ class MovieQueryServiceTest {
         @DisplayName("조회 실패 - 영화 ID 가 존재하지 않는 경우")
         public void shouldThrowExceptionWhenMovieIsNotFound() throws Exception {
             // given
-            Long movieId = 1L;
+            Long movieId = 99L;
 
             // when
             CoreException coreException = Assertions.assertThrows(CoreException.class, () -> movieQueryService.getMovie(new GetMovieByIdQuery(movieId)));

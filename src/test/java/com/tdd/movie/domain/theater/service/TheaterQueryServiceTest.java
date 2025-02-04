@@ -1,23 +1,30 @@
 package com.tdd.movie.domain.theater.service;
 
+import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.domain.theater.domain.Theater;
 import com.tdd.movie.domain.theater.domain.TheaterSchedule;
+import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.dto.TheaterQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieIdQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindReservableTheaterSchedulesQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindTheatersByIdsQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.GetTheaterByIdQuery;
+import com.tdd.movie.infra.db.movie.MovieJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;
+import com.tdd.movie.infra.db.theater.TheaterSeatJpaRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.tdd.movie.domain.support.error.ErrorType.Theater.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,13 +38,20 @@ class TheaterQueryServiceTest {
     TheaterQueryService theaterQueryService;
 
     @Autowired
+    MovieJpaRepository movieJpaRepository;
+
+    @Autowired
     TheaterJpaRepository theaterJpaRepository;
 
     @Autowired
     TheaterScheduleJpaRepository theaterScheduleJpaRepository;
 
+    @Autowired
+    TheaterSeatJpaRepository theaterSeatJpaRepository;
+
     @BeforeEach
     public void setUp() {
+        movieJpaRepository.deleteAll();
         theaterJpaRepository.deleteAll();
         theaterScheduleJpaRepository.deleteAll();
     }
@@ -160,7 +174,7 @@ class TheaterQueryServiceTest {
         @DisplayName("영화관 조회 실패 - 영화관 데이터가 존재하지 않는 경우")
         public void shouldThrowExceptionWhenTheaterIsNotFound() throws Exception {
             // given
-            Long theaterId = 1L;
+            Long theaterId = 99L;
 
             // when
             CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterQueryService.getTheater(new GetTheaterByIdQuery(theaterId)));
@@ -234,6 +248,81 @@ class TheaterQueryServiceTest {
                     });
             assertThat(reservableTheaterSchedules).hasSize(2);
         }
+    }
+
+    @Nested
+    @DisplayName("findReservableTheaterSeats 통합 테스트")
+    class findReservableTheaterSeatsTest {
+        @Test
+        @DisplayName("예약 가능한 영화관 좌석 조회 성공 - 좌석 없음")
+        public void shouldSuccessFindReservableTheaterSeatsWhenNotExistData() throws Exception {
+            // given
+            Long theaterScheduleId = 1L;
+
+            // when
+            List<TheaterSeat> reservableTheaterSeats = theaterQueryService.findReservableTheaterSeats(new TheaterQuery.FindReservableTheaterSeatsQuery(theaterScheduleId, false));
+
+            // then
+            assertThat(reservableTheaterSeats).hasSize(0);
+        }
+
+        @Test
+        @DisplayName("예약 가능한 영화관 좌석 조회 성공")
+        public void shouldSuccessFindReservableTheaterSeats() {
+            // Given
+            List<TheaterSchedule> schedules = saveDummyTheaterSchedules();
+            List<TheaterSeat> seats = saveDummyTheaterSeats(schedules);
+
+            Long theaterScheduleId = schedules.get(0).getId(); // 첫 번째 스케줄 ID 가져오기
+
+            // When
+            List<TheaterSeat> reservableSeats = theaterQueryService.findReservableTheaterSeats(
+                    new TheaterQuery.FindReservableTheaterSeatsQuery(theaterScheduleId, false)
+            );
+
+            // Then
+            assertThat(reservableSeats).isNotEmpty(); // 예약 가능한 좌석이 있어야 함
+            assertThat(reservableSeats).allMatch(seat -> !seat.getIsReserved()); // 모든 좌석이 예약되지 않은 상태여야 함
+
+            // 전체 좌석 중 예약되지 않은 좌석 개수와 비교
+            long totalAvailableSeats = seats.stream()
+                    .filter(seat -> seat.getTheaterScheduleId().equals(theaterScheduleId) && !seat.getIsReserved())
+                    .count();
+
+            assertThat(reservableSeats).hasSize((int) totalAvailableSeats);
+        }
+    }
+
+
+    // 더미 데이터 저장
+    public List<Long> saveDummyMovies() {
+        List<Movie> movies = movieJpaRepository.saveAll(List.of(
+                Movie.builder()
+                        .title("영화 A")
+                        .screeningStartDate(LocalDate.now())
+                        .screeningEndDate(LocalDate.now().plusDays(3))
+                        .build(),
+
+                Movie.builder()
+                        .title("영화 B")
+                        .screeningStartDate(LocalDate.now().plusDays(1))
+                        .screeningEndDate(LocalDate.now().plusDays(5))
+                        .build(),
+
+                Movie.builder()
+                        .title("영화 C")
+                        .screeningStartDate(LocalDate.now().plusDays(2))
+                        .screeningEndDate(LocalDate.now().plusDays(6))
+                        .build(),
+
+                Movie.builder()
+                        .title("영화 D")
+                        .screeningStartDate(LocalDate.now().plusDays(3))
+                        .screeningEndDate(LocalDate.now().plusDays(7))
+                        .build()
+        ));
+
+        return movies.stream().map(Movie::getId).collect(Collectors.toList());
     }
 
     // 더미 데이터 입력
@@ -418,5 +507,24 @@ class TheaterQueryServiceTest {
         return theaters;
     }
 
+    public List<TheaterSeat> saveDummyTheaterSeats(List<TheaterSchedule> theaterSchedules) {
+        List<TheaterSeat> seats = new ArrayList<>();
+
+        for (TheaterSchedule schedule : theaterSchedules) {
+            for (int i = 1; i <= 10; i++) { // 좌석 10개 생성
+                TheaterSeat seat = TheaterSeat.builder()
+                        .theaterScheduleId(schedule.getId())
+                        .number(i)
+                        .price(10000 + (i * 500)) // 좌석 번호에 따라 가격 변동
+                        .isReserved(false) // 기본적으로 예약되지 않음
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build();
+
+                seats.add(seat);
+            }
+        }
+        return theaterSeatJpaRepository.saveAll(seats);
+    }
 
 }

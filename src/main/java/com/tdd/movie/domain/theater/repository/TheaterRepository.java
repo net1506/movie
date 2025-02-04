@@ -8,6 +8,7 @@ import com.tdd.movie.domain.theater.domain.TheaterSchedule;
 import com.tdd.movie.domain.theater.domain.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.FindTheatersByIdsParam;
 import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.GetTheaterByIdParam;
+import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.GetTheaterScheduleByIdParam;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface TheaterRepository {
     List<Theater> findTheaters(FindTheatersByIdsParam param);
 
     List<Long> findDistinctTheaterIds(FindDistinctTheaterIdsByMovieIdParam param);
+
+    TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam query);
 
     List<TheaterSchedule> findAllTheaterSchedules(FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam param);
 

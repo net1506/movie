@@ -36,4 +36,11 @@ public class MovieRepositoryParam {
     ) {
 
     }
+
+    public record FindAllTheaterSeatsByScheduleIdAndIsReservedParam(
+            Long theaterScheduleId,
+            Boolean isReserved
+    ) {
+
+    }
 }

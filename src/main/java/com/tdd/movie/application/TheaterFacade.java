@@ -5,8 +5,11 @@ import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
 import com.tdd.movie.domain.theater.domain.Theater;
 import com.tdd.movie.domain.theater.domain.TheaterSchedule;
+import com.tdd.movie.domain.theater.domain.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterQuery;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.FindReservableTheaterSeatsQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.GetTheaterByIdQuery;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.GetTheaterScheduleByIdQuery;
 import com.tdd.movie.domain.theater.service.TheaterQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -41,6 +44,32 @@ public class TheaterFacade {
                 new TheaterQuery.FindReservableTheaterSchedulesQuery(
                         theater.getId(),
                         movie.getId()
+                )
+        );
+    }
+
+    /**
+     * 예약 가능한 영화 좌석 목록 반환
+     *
+     * @return
+     */
+    public List<TheaterSeat> getReservableTheaterSeats(
+            Long theaterScheduleId
+    ) {
+        // 영화 스케쥴 정보를 불러온다.
+        TheaterSchedule theaterSchedule = theaterQueryService.getTheaterSchedule(new GetTheaterScheduleByIdQuery(theaterScheduleId));
+
+        // 영화 정보를 불러온다.
+        movieQueryService.getMovie(new GetMovieByIdQuery(theaterSchedule.getMovieId()));
+
+        // 영화관 정보를 불러온다.
+        theaterQueryService.getTheater(new GetTheaterByIdQuery(theaterSchedule.getTheaterId()));
+
+        // 이용 가능한 영화관 스케쥴 목록을 반환한다.
+        return theaterQueryService.findReservableTheaterSeats(
+                new FindReservableTheaterSeatsQuery(
+                        theaterSchedule.getId(),
+                        false
                 )
         );
     }

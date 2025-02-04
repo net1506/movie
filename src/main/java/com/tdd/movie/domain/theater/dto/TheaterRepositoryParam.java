@@ -10,6 +10,12 @@ public class TheaterRepositoryParam {
 
     }
 
+    public record GetTheaterScheduleByIdParam(
+            Long theaterScheduleId
+    ) {
+
+    }
+
     public record FindTheatersByIdsParam(
             List<Long> theaterIds
     ) {
