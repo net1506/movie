@@ -293,7 +293,6 @@ class TheaterQueryServiceTest {
         }
     }
 
-
     // 더미 데이터 저장
     public List<Long> saveDummyMovies() {
         List<Movie> movies = movieJpaRepository.saveAll(List.of(

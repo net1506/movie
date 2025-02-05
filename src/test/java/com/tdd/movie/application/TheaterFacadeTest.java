@@ -115,29 +115,23 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남 ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
 
-            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
-                    .filter(theater -> theater.getName().equals("CGV 용산"))
-                    .map(Theater::getId)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
-
             // TheaterSchedule 리스트 생성
-            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+            createTheaterSchedule(movieAId, cgvGangNamTheaterId);
 
             // when
-            List<TheaterSchedule> reservableTheaterSchedules = theaterFacade.getReservableTheaterSchedules(movieAId, cgvGangnamId);
+            List<TheaterSchedule> reservableTheaterSchedules = theaterFacade.getReservableTheaterSchedules(movieAId, cgvGangNamTheaterId);
 
             // then
             assertThat(reservableTheaterSchedules).hasSize(1);
             assertThat(reservableTheaterSchedules.get(0).getMovieId()).isEqualTo(movieAId);
-            assertThat(reservableTheaterSchedules.get(0).getTheaterId()).isEqualTo(cgvGangnamId);
+            assertThat(reservableTheaterSchedules.get(0).getTheaterId()).isEqualTo(cgvGangNamTheaterId);
         }
     }
 
@@ -159,21 +153,15 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남  ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
 
-            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
-                    .filter(theater -> theater.getName().equals("CGV 용산"))
-                    .map(Theater::getId)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
-
             // TheaterSchedule 리스트 생성
-            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+            createTheaterSchedule(movieAId, cgvGangNamTheaterId);
 
             List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
             Long movieId = movies.get(0).getId();
@@ -205,21 +193,15 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남  ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
 
-            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
-                    .filter(theater -> theater.getName().equals("CGV 용산"))
-                    .map(Theater::getId)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
-
             // TheaterSchedule 리스트 생성
-            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+            createTheaterSchedule(movieAId, cgvGangNamTheaterId);
 
             List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
             Long movieId = movies.get(0).getId();
@@ -272,21 +254,15 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남 ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
 
-            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
-                    .filter(theater -> theater.getName().equals("CGV 용산"))
-                    .map(Theater::getId)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
-
             // TheaterSchedule 리스트 생성
-            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+            createTheaterSchedule(movieAId, cgvGangNamTheaterId);
 
             List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
             Long movieId = movies.get(0).getId();
@@ -338,21 +314,15 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남  ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
 
-            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
-                    .filter(theater -> theater.getName().equals("CGV 용산"))
-                    .map(Theater::getId)
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
-
             // TheaterSchedule 리스트 생성
-            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+            createTheaterSchedule(movieAId, cgvGangNamTheaterId);
 
             List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
             Long movieId = movies.get(0).getId();
@@ -404,8 +374,8 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남 ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
@@ -415,7 +385,7 @@ class TheaterFacadeTest {
             List<TheaterSchedule> schedulesInsert = List.of(
                     TheaterSchedule.builder()
                             .movieId(movieAId)
-                            .theaterId(cgvGangnamId)
+                            .theaterId(cgvGangNamTheaterId)
                             .theaterScreenId(201L)
                             .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
                             .reservationStartAt(LocalDateTime.now().plusDays(1).withHour(1)) // 1일 후 오전 1시
@@ -469,8 +439,8 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남 ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
@@ -480,7 +450,7 @@ class TheaterFacadeTest {
             List<TheaterSchedule> schedulesInsert = List.of(
                     TheaterSchedule.builder()
                             .movieId(movieAId)
-                            .theaterId(cgvGangnamId)
+                            .theaterId(cgvGangNamTheaterId)
                             .theaterScreenId(201L)
                             .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
                             .reservationStartAt(LocalDateTime.now().minusDays(1).withHour(1)) // 1일 전 오전 1시
@@ -534,8 +504,8 @@ class TheaterFacadeTest {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
 
-            // CGV 강남 & CGV 용산 ID 조회
-            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+            // CGV 강남 ID 조회
+            Long cgvGangNamTheaterId = theaterJpaRepository.findAll().stream()
                     .filter(theater -> theater.getName().equals("CGV 강남"))
                     .map(Theater::getId)
                     .findFirst()
@@ -545,7 +515,7 @@ class TheaterFacadeTest {
             List<TheaterSchedule> schedulesInsert = List.of(
                     TheaterSchedule.builder()
                             .movieId(movieAId)
-                            .theaterId(cgvGangnamId)
+                            .theaterId(cgvGangNamTheaterId)
                             .theaterScreenId(201L)
                             .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
                             .reservationStartAt(LocalDateTime.now().minusDays(1).withHour(1)) // 1일 전 오전 1시
@@ -607,28 +577,6 @@ class TheaterFacadeTest {
                         .plot("드라마 영화 B의 줄거리")
                         .posterImageUrl("/images/movies/movie-b.jpg")
                         .runningTime(135)
-                        .build(),
-
-                Movie.builder()
-                        .title("영화 C")
-                        .screeningStartDate(LocalDate.now().plusDays(2))
-                        .screeningEndDate(LocalDate.now().plusDays(6))
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .plot("코미디 영화 C의 줄거리")
-                        .posterImageUrl("/images/movies/movie-c.jpg")
-                        .runningTime(110)
-                        .build(),
-
-                Movie.builder()
-                        .title("영화 D")
-                        .screeningStartDate(LocalDate.now().plusDays(3))
-                        .screeningEndDate(LocalDate.now().plusDays(7))
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .plot("스릴러 영화 D의 줄거리")
-                        .posterImageUrl("/images/movies/movie-d.jpg")
-                        .runningTime(140)
                         .build()
         );
 
@@ -662,11 +610,11 @@ class TheaterFacadeTest {
         theaterJpaRepository.saveAll(theatersInsert);
     }
 
-    private void createTheaterSchedule(Long movieAId, Long cgvGangnamId, Long cgvYongsanId) {
+    private void createTheaterSchedule(Long movieAId, Long cgvGangNamTheaterId) {
         List<TheaterSchedule> schedulesInsert = List.of(
                 TheaterSchedule.builder()
                         .movieId(movieAId)
-                        .theaterId(cgvGangnamId)
+                        .theaterId(cgvGangNamTheaterId)
                         .theaterScreenId(201L)
                         .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
                         .reservationStartAt(LocalDateTime.now().minusHours(2)) // 2시간 전부터 예약 가능
@@ -677,33 +625,11 @@ class TheaterFacadeTest {
 
                 TheaterSchedule.builder()
                         .movieId(movieAId)
-                        .theaterId(cgvGangnamId)
+                        .theaterId(cgvGangNamTheaterId)
                         .theaterScreenId(202L)
                         .movieAt(LocalDateTime.now().plusDays(2).withHour(14)) // 2일 후 오후 2시
                         .reservationStartAt(LocalDateTime.now().plusHours(3)) // 3시간 후 예약 시작
                         .reservationEndAt(LocalDateTime.now().plusHours(6)) // 6시간 후 예약 마감
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .build(),
-
-                TheaterSchedule.builder()
-                        .movieId(movieAId)
-                        .theaterId(cgvYongsanId)
-                        .theaterScreenId(203L)
-                        .movieAt(LocalDateTime.now().plusDays(3).withHour(18)) // 3일 후 오후 6시
-                        .reservationStartAt(LocalDateTime.now().minusHours(4)) // 4시간 전부터 예약 가능
-                        .reservationEndAt(LocalDateTime.now().plusHours(7)) // 7시간 후 예약 마감
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
-                        .build(),
-
-                TheaterSchedule.builder()
-                        .movieId(movieAId)
-                        .theaterId(cgvYongsanId)
-                        .theaterScreenId(204L)
-                        .movieAt(LocalDateTime.now().plusDays(4).withHour(20)) // 4일 후 오후 8시
-                        .reservationStartAt(LocalDateTime.now().plusHours(5)) // 5시간 후 예약 시작
-                        .reservationEndAt(LocalDateTime.now().plusHours(8)) // 8시간 후 예약 마감
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .build()
