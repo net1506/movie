@@ -3,10 +3,10 @@ package com.tdd.movie.application;
 import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
-import com.tdd.movie.domain.theater.domain.Reservation;
-import com.tdd.movie.domain.theater.domain.Theater;
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.Reservation;
+import com.tdd.movie.domain.theater.model.Theater;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
 import com.tdd.movie.domain.theater.dto.TheaterQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.*;
@@ -92,7 +92,7 @@ public class TheaterFacade {
         User user = userQueryService.getUser(new GetUserByIdQuery(userId));
 
         TheaterSeat theaterSeat = theaterQueryService.getTheaterSeat(new GetTheaterSeatByIdQuery(theaterSeatId));
-        
+
         TheaterSchedule theaterSchedule = theaterQueryService.getTheaterSchedule(new GetTheaterScheduleByIdQuery(theaterSeat.getTheaterScheduleId()));
 
         // 영화 조회 ( 존재 하는 영화 인지 에러 체크를 위한 조회 )

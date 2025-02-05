@@ -1,7 +1,7 @@
 package com.tdd.movie.interfaces.api.dto;
 
-import com.tdd.movie.domain.theater.domain.Reservation;
-import com.tdd.movie.domain.theater.domain.ReservationStatus;
+import com.tdd.movie.domain.theater.model.Reservation;
+import com.tdd.movie.domain.theater.model.ReservationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

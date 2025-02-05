@@ -1,7 +1,7 @@
 package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.TheaterFacade;
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.interfaces.api.controller.ITheaterController;
 import com.tdd.movie.interfaces.api.dto.TheaterControllerDto.GetAvailableSchedulesResponse;
 import com.tdd.movie.interfaces.api.dto.TheaterControllerDto.TheaterScheduleResponse;

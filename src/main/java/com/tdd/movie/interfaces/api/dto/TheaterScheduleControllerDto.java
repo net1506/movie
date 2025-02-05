@@ -1,6 +1,6 @@
 package com.tdd.movie.interfaces.api.dto;
 
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;

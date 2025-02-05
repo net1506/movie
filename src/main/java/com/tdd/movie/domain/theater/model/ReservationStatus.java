@@ -1,4 +1,4 @@
-package com.tdd.movie.domain.theater.domain;
+package com.tdd.movie.domain.theater.model;
 
 public enum ReservationStatus {
     WAITING, // 대기

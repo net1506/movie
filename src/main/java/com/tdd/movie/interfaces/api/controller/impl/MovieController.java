@@ -2,7 +2,7 @@ package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.MovieFacade;
 import com.tdd.movie.domain.movie.model.Movie;
-import com.tdd.movie.domain.theater.domain.Theater;
+import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.interfaces.api.controller.IMovieController;
 import com.tdd.movie.interfaces.api.dto.MovieControllerDto.*;
 import lombok.RequiredArgsConstructor;

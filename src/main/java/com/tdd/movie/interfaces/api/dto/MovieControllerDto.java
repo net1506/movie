@@ -1,7 +1,7 @@
 package com.tdd.movie.interfaces.api.dto;
 
 import com.tdd.movie.domain.movie.model.Movie;
-import com.tdd.movie.domain.theater.domain.Theater;
+import com.tdd.movie.domain.theater.model.Theater;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;

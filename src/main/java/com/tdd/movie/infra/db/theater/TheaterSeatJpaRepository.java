@@ -1,6 +1,6 @@
 package com.tdd.movie.infra.db.theater;
 
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,6 +1,6 @@
 package com.tdd.movie.domain.theater.service;
 
-import com.tdd.movie.domain.theater.domain.Reservation;
+import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.GetReservationByIdQuery;
 import org.junit.jupiter.api.DisplayName;

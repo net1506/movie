@@ -1,7 +1,7 @@
 package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.TheaterFacade;
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.interfaces.api.dto.TheaterScheduleControllerDto.GetAvailableSeatsResponse;
 import com.tdd.movie.interfaces.api.dto.TheaterScheduleControllerDto.TheaterSeatResponse;
 import lombok.RequiredArgsConstructor;

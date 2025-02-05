@@ -1,6 +1,6 @@
 package com.tdd.movie.interfaces.api.dto;
 
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;

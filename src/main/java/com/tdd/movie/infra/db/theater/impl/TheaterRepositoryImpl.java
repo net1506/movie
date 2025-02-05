@@ -4,10 +4,10 @@ import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSchedul
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSeatsByScheduleIdAndIsReservedParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindDistinctTheaterIdsByMovieIdParam;
 import com.tdd.movie.domain.support.error.CoreException;
-import com.tdd.movie.domain.theater.domain.Reservation;
-import com.tdd.movie.domain.theater.domain.Theater;
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.Reservation;
+import com.tdd.movie.domain.theater.model.Theater;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.*;
 import com.tdd.movie.domain.theater.repository.TheaterRepository;
 import com.tdd.movie.infra.db.theater.ReservationJpaRepository;

@@ -1,6 +1,6 @@
 package com.tdd.movie.domain.theater.service;
 
-import com.tdd.movie.domain.theater.domain.Reservation;
+import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
 import com.tdd.movie.domain.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import static com.tdd.movie.domain.theater.domain.ReservationStatus.WAITING;
+import static com.tdd.movie.domain.theater.model.ReservationStatus.WAITING;
 
 @Service
 @RequiredArgsConstructor

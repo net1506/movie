@@ -2,8 +2,8 @@ package com.tdd.movie.application;
 
 
 import com.tdd.movie.domain.movie.model.Movie;
-import com.tdd.movie.domain.theater.domain.Theater;
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.Theater;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.infra.db.movie.MovieJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;

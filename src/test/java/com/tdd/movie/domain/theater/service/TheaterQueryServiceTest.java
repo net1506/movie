@@ -2,9 +2,9 @@ package com.tdd.movie.domain.theater.service;
 
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.support.error.CoreException;
-import com.tdd.movie.domain.theater.domain.Theater;
-import com.tdd.movie.domain.theater.domain.TheaterSchedule;
-import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.theater.model.Theater;
+import com.tdd.movie.domain.theater.model.TheaterSchedule;
+import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.domain.theater.dto.TheaterQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieIdQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindReservableTheaterSchedulesQuery;

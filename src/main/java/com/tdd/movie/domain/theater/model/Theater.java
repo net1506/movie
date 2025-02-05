@@ -1,4 +1,4 @@
-package com.tdd.movie.domain.theater.domain;
+package com.tdd.movie.domain.theater.model;
 
 import com.tdd.movie.domain.common.base.BaseEntity;
 import jakarta.persistence.Entity;

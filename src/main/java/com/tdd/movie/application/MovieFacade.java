@@ -5,7 +5,7 @@ import com.tdd.movie.domain.movie.dto.MovieQuery.FindUpcomingMoviesByDateAfterQu
 import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
-import com.tdd.movie.domain.theater.domain.Theater;
+import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindDistinctTheaterIdsByMovieIdQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.FindTheatersByIdsQuery;
 import com.tdd.movie.domain.theater.service.TheaterQueryService;

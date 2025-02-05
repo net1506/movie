@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.support.CacheName;
-import com.tdd.movie.domain.theater.domain.Theater;
+import com.tdd.movie.domain.theater.model.Theater;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
