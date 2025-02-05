@@ -4,8 +4,10 @@ import com.tdd.movie.interfaces.api.dto.TheaterSeatControllerDto.ReserveSeatResp
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
+@Tag(name = "TheaterSeat", description = "영화관 좌석 API")
 public interface ITheaterSeatController {
 
     @Operation(summary = "영화관 좌석 예매", description = "영화관 좌석을 예매 합니다.")

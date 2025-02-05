@@ -3,17 +3,24 @@ package com.tdd.movie.application;
 import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
+import com.tdd.movie.domain.payment.dto.PaymentCommand.CreatePaymentCommand;
+import com.tdd.movie.domain.payment.dto.PaymentQuery.GetPaymentByIdQuery;
+import com.tdd.movie.domain.payment.model.Payment;
+import com.tdd.movie.domain.payment.service.PaymentCommandService;
+import com.tdd.movie.domain.payment.service.PaymentQueryService;
+import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
+import com.tdd.movie.domain.theater.dto.TheaterQuery;
+import com.tdd.movie.domain.theater.dto.TheaterQuery.*;
 import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.domain.theater.model.TheaterSeat;
-import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
-import com.tdd.movie.domain.theater.dto.TheaterQuery;
-import com.tdd.movie.domain.theater.dto.TheaterQuery.*;
 import com.tdd.movie.domain.theater.service.TheaterCommandService;
 import com.tdd.movie.domain.theater.service.TheaterQueryService;
 import com.tdd.movie.domain.user.dto.UserQuery.GetUserByIdQuery;
+import com.tdd.movie.domain.user.dto.UserQuery.GetUserWalletByIdQuery;
 import com.tdd.movie.domain.user.model.User;
+import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -31,6 +38,8 @@ public class TheaterFacade {
     private final TheaterQueryService theaterQueryService;
 
     private final TheaterCommandService theaterCommandService;
+    private final PaymentCommandService paymentCommandService;
+    private final PaymentQueryService paymentQueryService;
 
 
     /**
@@ -110,4 +119,33 @@ public class TheaterFacade {
         return theaterQueryService.getReservation(new GetReservationByIdQuery(reservation.getId()));
     }
 
+    /**
+     * 영화관 좌석을 결재한다.
+     *
+     * @return Payment 객체
+     */
+    public Payment processPayment(Long reservationId, Long userId) {
+        User user = userQueryService.getUser(new GetUserByIdQuery(userId));
+        Reservation reservation = theaterQueryService.getReservation(new GetReservationByIdQuery(reservationId));
+
+        // 예매 내역의 소유자와 결재자 동일 여부 확인
+        reservation.validateReservationOwner(user.getId());
+
+        // 예매 내역의 상태를 체크한다. (취소된 상태는 아닌지 또는 이미 결재된 상태는 아닌지 체크)
+        reservation.validatePaymentStatus();
+
+        TheaterSeat theaterSeat = theaterQueryService.getTheaterSeat(new GetTheaterSeatByIdQuery(reservation.getTheaterSeatId()));
+        Integer price = theaterSeat.getPrice(); // 결제 금액
+
+        Wallet wallet = userQueryService.getWallet(new GetUserWalletByIdQuery(userId));
+        // 잔액 여부 확인 및 결재 처리
+        wallet.use(price);
+
+        reservation.confirm();
+
+        // 결재 내역을 저장한다.
+        Payment payment = paymentCommandService.createPayment(new CreatePaymentCommand(reservationId, userId, price));
+
+        return paymentQueryService.getPayment(new GetPaymentByIdQuery(payment.getId()));
+    }
 }

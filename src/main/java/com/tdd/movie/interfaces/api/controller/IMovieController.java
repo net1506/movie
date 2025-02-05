@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 
-@Tag(name = "User", description = "영화 API")
+@Tag(name = "Movie", description = "영화 API")
 public interface IMovieController {
 
     @Operation(summary = "영화 조회", description = "영화를 조회합니다.")

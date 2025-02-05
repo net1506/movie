@@ -18,7 +18,7 @@ public class UserCommandService {
     public void chargeUserWalletAmount(ChargeUserWalletAmountByWalletIdCommand command) {
         Wallet wallet = userRepository.getWallet(new GetUserWalletByIdParam(command.walletId()));
 
-        wallet.chargeAmount(command.amount());
+        wallet.charge(command.amount());
 
         userRepository.saveWallet(wallet);
     }

@@ -1,17 +1,21 @@
 package com.tdd.movie.application;
 
 import com.tdd.movie.domain.movie.model.Movie;
+import com.tdd.movie.domain.payment.model.Payment;
 import com.tdd.movie.domain.support.error.CoreException;
 import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.domain.user.model.User;
+import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.infra.db.movie.MovieJpaRepository;
+import com.tdd.movie.infra.db.theater.ReservationJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterSeatJpaRepository;
 import com.tdd.movie.infra.db.user.UserJpaRepository;
+import com.tdd.movie.infra.db.user.WalletJpaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
@@ -25,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tdd.movie.domain.support.error.ErrorType.Theater.*;
-import static com.tdd.movie.domain.support.error.ErrorType.User.USER_NOT_FOUND;
-import static com.tdd.movie.domain.theater.model.ReservationStatus.WAITING;
+import static com.tdd.movie.domain.support.error.ErrorType.User.*;
+import static com.tdd.movie.domain.theater.model.ReservationStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -41,6 +45,9 @@ class TheaterFacadeTest {
     TheaterJpaRepository theaterJpaRepository;
 
     @Autowired
+    UserJpaRepository userJpaRepository;
+
+    @Autowired
     TheaterScheduleJpaRepository theaterScheduleJpaRepository;
 
     @Autowired
@@ -50,10 +57,11 @@ class TheaterFacadeTest {
     TheaterFacade theaterFacade;
 
     @PersistenceContext
-    private EntityManager entityManager;
-
+    EntityManager entityManager;
     @Autowired
-    private UserJpaRepository userJpaRepository;
+    private ReservationJpaRepository reservationJpaRepository;
+    @Autowired
+    private WalletJpaRepository walletJpaRepository;
 
     @BeforeEach
     public void setUp() {
@@ -552,6 +560,227 @@ class TheaterFacadeTest {
             assertThat(reservation.getUserId()).isEqualTo(savedUser.getId());
             assertThat(reservation.getReservedAt()).isBefore(LocalDateTime.now());
             assertThat(reservation.getStatus()).isEqualTo(WAITING);
+        }
+    }
+
+    @Nested
+    @DisplayName("processPayment 단위 테스트")
+    class processPaymentTest {
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 사용자가 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenUserNotFound() throws Exception {
+            // given
+            Long userId = null;
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(userId)
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(1L)
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(userId, savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(USER_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(USER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 영화관 예매 내역이 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenReservationNotFound() throws Exception {
+            // given
+            Long userId = 1L;
+            User savedUser = userJpaRepository.save(User.builder().id(userId).name("user-1").build());
+            Long reservationId = 1L;
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(userId, reservationId));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(RESERVATION_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(RESERVATION_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 예매 내역의 소유자와 결재자가 상이한 경우")
+        public void shouldThrowExceptionWhenReservationOwnerIsWrong() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(2L)
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(3L)
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(RESERVATION_USER_NOT_MATCHED);
+            assertThat(coreException.getMessage()).isEqualTo(RESERVATION_USER_NOT_MATCHED.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 예매 내역의 상태가 이미 결재 확인 상태인 경우")
+        public void shouldThrowExceptionWhenPaymentStatusIsConform() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(CONFIRMED)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(3L)
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(RESERVATION_ALREADY_PAID);
+            assertThat(coreException.getMessage()).isEqualTo(RESERVATION_ALREADY_PAID.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 예매 내역의 상태가 결재 취소 상태인 경우")
+        public void shouldThrowExceptionWhenPaymentStatusIsCancel() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(CANCELED)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(3L)
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(RESERVATION_ALREADY_CANCELED);
+            assertThat(coreException.getMessage()).isEqualTo(RESERVATION_ALREADY_CANCELED.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 예매 좌석이 없는 경우")
+        public void shouldThrowExceptionWhenReservationSeatIsNotFound() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(3L)
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(THEATER_SEAT_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(THEATER_SEAT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 사용자 지갑이 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenWalletIsNotFound() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Integer price = 3000;
+
+            TheaterSeat savedSeat = theaterSeatJpaRepository.save(TheaterSeat.builder()
+                    .theaterScheduleId(1L)
+                    .price(price)
+                    .number(30)
+                    .isReserved(false)
+                    .build());
+
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(savedSeat.getId())
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(WALLET_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(WALLET_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 실패 - 지갑 잔액이 부족한 경우")
+        public void shouldThrowExceptionWhenBalanceIsNotEnough() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Wallet savedWallet = walletJpaRepository.save(Wallet.builder()
+                    .userId(savedUser.getId())
+                    .amount(1000)
+                    .build());
+            Integer price = 3000;
+
+            TheaterSeat savedSeat = theaterSeatJpaRepository.save(TheaterSeat.builder()
+                    .theaterScheduleId(1L)
+                    .price(price)
+                    .number(30)
+                    .isReserved(false)
+                    .build());
+
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(savedSeat.getId())
+                    .build());
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processPayment(savedUser.getId(), savedReservation.getId()));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(NOT_ENOUGH_BALANCE);
+            assertThat(coreException.getMessage()).isEqualTo(NOT_ENOUGH_BALANCE.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 결재 테스트 성공")
+        public void shouldSuccessProcessPayment() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+            Wallet savedWallet = walletJpaRepository.save(Wallet.builder()
+                    .userId(savedUser.getId())
+                    .amount(3000)
+                    .build());
+            Integer price = 3000;
+
+            TheaterSeat savedSeat = theaterSeatJpaRepository.save(TheaterSeat.builder()
+                    .theaterScheduleId(1L)
+                    .price(price)
+                    .number(30)
+                    .isReserved(false)
+                    .build());
+
+            Reservation savedReservation = reservationJpaRepository.save(Reservation.builder()
+                    .userId(savedUser.getId())
+                    .status(WAITING)
+                    .reservedAt(LocalDateTime.now())
+                    .theaterSeatId(savedSeat.getId())
+                    .build());
+
+            // when
+            Payment payment = theaterFacade.processPayment(savedUser.getId(), savedReservation.getId());
+            Wallet fetchedWallet = walletJpaRepository.findById(savedWallet.getId()).orElse(null);
+            Reservation reservation = reservationJpaRepository.findById(savedReservation.getId()).orElse(null);
+
+            // then
+            assertThat(payment.getAmount()).isEqualTo(price);
+            assertThat(payment.getUserId()).isEqualTo(savedUser.getId());
+            assertThat(payment.getReservationId()).isEqualTo(savedReservation.getId());
+            assertThat(fetchedWallet.getAmount()).isEqualTo(0);
+            assertThat(reservation.getStatus()).isEqualTo(CONFIRMED);
         }
     }
 

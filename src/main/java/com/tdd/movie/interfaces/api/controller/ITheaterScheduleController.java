@@ -4,9 +4,11 @@ import com.tdd.movie.interfaces.api.dto.TheaterControllerDto.GetAvailableSchedul
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "TheaterSchedule", description = "영화관 스케쥴 API")
 public interface ITheaterScheduleController {
 
     @Operation(summary = "예약 가능한 영화관 좌석 조회", description = "예약 가능한 영화관 좌석을 조회합니다.")

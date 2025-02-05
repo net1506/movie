@@ -41,7 +41,23 @@ public class Wallet extends BaseEntity {
         }
     }
 
-    public void chargeAmount(Integer chargedAmount) {
+    public void use(Integer usedAmount) {
+        // 사용 금액
+        int balance = this.amount - usedAmount;
+
+        if (usedAmount == null || usedAmount <= 0) {
+            throw new CoreException(INVALID_AMOUNT);
+        }
+
+        if (balance < 0) {
+            throw new CoreException(NOT_ENOUGH_BALANCE);
+        }
+
+        // 남은 잔액 변경 처리
+        this.amount = balance;
+    }
+
+    public void charge(Integer chargedAmount) {
         // 충전 금액
         int addedAmount = this.amount + chargedAmount;
 
