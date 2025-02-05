@@ -70,18 +70,27 @@ class TheaterFacadeTest {
         theaterScheduleJpaRepository.deleteAll();
         theaterJpaRepository.deleteAll();
         movieJpaRepository.deleteAll();
+        reservationJpaRepository.deleteAll();
+        userJpaRepository.deleteAll();
+        walletJpaRepository.deleteAll();
 
         // 2. 트랜잭션 강제 커밋 (flush 호출)
         movieJpaRepository.flush();
         theaterJpaRepository.flush();
         theaterScheduleJpaRepository.flush();
         theaterSeatJpaRepository.flush();
+        reservationJpaRepository.flush();
+        userJpaRepository.flush();
+        walletJpaRepository.flush();
 
         // 3. ID 초기화 (AUTO_INCREMENT 문제 해결)
         entityManager.createNativeQuery("ALTER TABLE movies AUTO_INCREMENT = 1").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE theaters AUTO_INCREMENT = 1").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE theater_schedules AUTO_INCREMENT = 1").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE theater_seats AUTO_INCREMENT = 1").executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE reservations AUTO_INCREMENT = 1").executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE users AUTO_INCREMENT = 1").executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE wallets AUTO_INCREMENT = 1").executeUpdate();
     }
 
     @Nested
