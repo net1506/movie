@@ -30,6 +30,26 @@ public class TheaterQuery {
         }
     }
 
+    public record GetTheaterSeatByIdQuery(
+            Long theaterSeatId
+    ) {
+        public GetTheaterSeatByIdQuery {
+            if (theaterSeatId == null) {
+                throw new CoreException(THEATER_SEAT_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
+
+    public record GetReservationByIdQuery(
+            Long reservationId
+    ) {
+        public GetReservationByIdQuery {
+            if (reservationId == null) {
+                throw new CoreException(RESERVATION_ID_MUST_NOT_BE_NULL);
+            }
+        }
+    }
+
     public record FindTheatersByIdsQuery(
             List<Long> theaterIds
     ) {

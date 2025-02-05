@@ -7,6 +7,7 @@ import com.tdd.movie.interfaces.api.dto.TheaterControllerDto.GetAvailableSchedul
 import com.tdd.movie.interfaces.api.dto.TheaterControllerDto.TheaterScheduleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ public class TheaterController implements ITheaterController {
     private final TheaterFacade theaterFacade;
 
     @Override
-    @RequestMapping("/{theaterId}/movies/{movieId}/available-schedules")
+    @GetMapping("/{theaterId}/movies/{movieId}/available-schedules")
     public ResponseEntity<GetAvailableSchedulesResponse> getAvailableSchedules(
             @PathVariable Long theaterId,
             @PathVariable Long movieId

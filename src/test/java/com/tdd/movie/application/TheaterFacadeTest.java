@@ -1,19 +1,20 @@
 package com.tdd.movie.application;
 
 import com.tdd.movie.domain.movie.model.Movie;
+import com.tdd.movie.domain.support.error.CoreException;
+import com.tdd.movie.domain.theater.domain.Reservation;
 import com.tdd.movie.domain.theater.domain.Theater;
 import com.tdd.movie.domain.theater.domain.TheaterSchedule;
 import com.tdd.movie.domain.theater.domain.TheaterSeat;
+import com.tdd.movie.domain.user.model.User;
 import com.tdd.movie.infra.db.movie.MovieJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterScheduleJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterSeatJpaRepository;
+import com.tdd.movie.infra.db.user.UserJpaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tdd.movie.domain.support.error.ErrorType.Theater.*;
+import static com.tdd.movie.domain.support.error.ErrorType.User.USER_NOT_FOUND;
+import static com.tdd.movie.domain.theater.domain.ReservationStatus.WAITING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -48,21 +52,24 @@ class TheaterFacadeTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private UserJpaRepository userJpaRepository;
+
     @BeforeEach
     public void setUp() {
-        // 🔥 1. 삭제 순서 조정 (자식 테이블 → 부모 테이블 순으로 삭제)
+        // 1. 삭제 순서 조정 (자식 테이블 → 부모 테이블 순으로 삭제)
         theaterSeatJpaRepository.deleteAll();
         theaterScheduleJpaRepository.deleteAll();
         theaterJpaRepository.deleteAll();
         movieJpaRepository.deleteAll();
 
-        // 🔥 2. 트랜잭션 강제 커밋 (flush 호출)
+        // 2. 트랜잭션 강제 커밋 (flush 호출)
         movieJpaRepository.flush();
         theaterJpaRepository.flush();
         theaterScheduleJpaRepository.flush();
         theaterSeatJpaRepository.flush();
 
-        // 🔥 3. ID 초기화 (AUTO_INCREMENT 문제 해결)
+        // 3. ID 초기화 (AUTO_INCREMENT 문제 해결)
         entityManager.createNativeQuery("ALTER TABLE movies AUTO_INCREMENT = 1").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE theaters AUTO_INCREMENT = 1").executeUpdate();
         entityManager.createNativeQuery("ALTER TABLE theater_schedules AUTO_INCREMENT = 1").executeUpdate();
@@ -243,6 +250,338 @@ class TheaterFacadeTest {
 
             // then
             assertThat(reservableTheaterSeats).hasSize(10);
+        }
+    }
+
+    @Nested
+    @DisplayName("영화 예매 내역 저장 테스트")
+    class processReservationTest {
+        @Test
+        @DisplayName("영화 예매 내역 저장 실패 - 사용자가 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenUserNotFound() throws Exception {
+            // given
+            Long userId = 1L;
+            createMovieData();
+
+            createTheaterData();
+
+            // 영화 A ID 조회
+            Long movieAId = movieJpaRepository.findAll().stream()
+                    .filter(movie -> movie.getTitle().equals("영화 A"))
+                    .map(Movie::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
+
+            // CGV 강남 & CGV 용산 ID 조회
+            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 강남"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
+
+            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 용산"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
+
+            // TheaterSchedule 리스트 생성
+            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+
+            List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
+            Long movieId = movies.get(0).getId();
+
+            List<Theater> theaters = theaterJpaRepository.findAll().stream().filter(theater -> theater.getName().equals("CGV 강남")).toList();
+            Long theaterId = theaters.get(0).getId();
+            List<TheaterSchedule> reservableTheaterSchedules = theaterFacade.getReservableTheaterSchedules(movieId, theaterId);
+            Long theaterScheduleId = reservableTheaterSchedules.get(0).getId();
+
+            // 10개의 좌석 생성
+            List<TheaterSeat> seats = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                seats.add(TheaterSeat.builder()
+                        .theaterScheduleId(theaterScheduleId)
+                        .number(i) // 좌석 번호 1~10
+                        .price(10000 + (i * 500)) // 가격 변동 (10,000 + 좌석 번호 * 500)
+                        .isReserved(false) // 기본적으로 예약되지 않은 상태
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+
+            // 저장
+            List<TheaterSeat> theaterSeats = theaterSeatJpaRepository.saveAll(seats);
+            Long theaterSeatId = theaterSeats.get(0).getId();
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processReservation(userId, theaterSeatId));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(USER_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(USER_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 저장 실패 - 영화관 좌석이 존재하지 않는 경우")
+        public void shouldThrowExceptionWhenTheaterSeatNotFound() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+
+            createMovieData();
+
+            createTheaterData();
+
+            // 영화 A ID 조회
+            Long movieAId = movieJpaRepository.findAll().stream()
+                    .filter(movie -> movie.getTitle().equals("영화 A"))
+                    .map(Movie::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
+
+            // CGV 강남 & CGV 용산 ID 조회
+            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 강남"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
+
+            Long cgvYongsanId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 용산"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 용산이 존재하지 않습니다."));
+
+            // TheaterSchedule 리스트 생성
+            createTheaterSchedule(movieAId, cgvGangnamId, cgvYongsanId);
+
+            List<Movie> movies = movieJpaRepository.findAll().stream().filter(movie -> movie.getTitle().equals("영화 A")).toList();
+            Long movieId = movies.get(0).getId();
+
+            List<Theater> theaters = theaterJpaRepository.findAll().stream().filter(theater -> theater.getName().equals("CGV 강남")).toList();
+            Long theaterId = theaters.get(0).getId();
+            List<TheaterSchedule> reservableTheaterSchedules = theaterFacade.getReservableTheaterSchedules(movieId, theaterId);
+            Long theaterScheduleId = reservableTheaterSchedules.get(0).getId();
+
+            // 10개의 좌석 생성
+            List<TheaterSeat> seats = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                seats.add(TheaterSeat.builder()
+                        .theaterScheduleId(theaterScheduleId)
+                        .number(i) // 좌석 번호 1~10
+                        .price(10000 + (i * 500)) // 가격 변동 (10,000 + 좌석 번호 * 500)
+                        .isReserved(false) // 기본적으로 예약되지 않은 상태
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+
+            // 저장
+            List<TheaterSeat> theaterSeats = theaterSeatJpaRepository.saveAll(seats);
+            Long theaterSeatId = 999L;
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processReservation(savedUser.getId(), theaterSeatId));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(THEATER_SEAT_NOT_FOUND);
+            assertThat(coreException.getMessage()).isEqualTo(THEATER_SEAT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 저장 실패 - 영화 예매 가능 시간이 아닌 영화 스케쥴을 예약 하려는 경우")
+        public void shouldThrowExceptionWhenTheaterScheduleIsNotAvailable() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+
+            createMovieData();
+
+            createTheaterData();
+
+            // 영화 A ID 조회
+            Long movieAId = movieJpaRepository.findAll().stream()
+                    .filter(movie -> movie.getTitle().equals("영화 A"))
+                    .map(Movie::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
+
+            // CGV 강남 & CGV 용산 ID 조회
+            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 강남"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
+
+            // TheaterSchedule 리스트 생성
+            List<TheaterSchedule> schedulesInsert = List.of(
+                    TheaterSchedule.builder()
+                            .movieId(movieAId)
+                            .theaterId(cgvGangnamId)
+                            .theaterScreenId(201L)
+                            .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
+                            .reservationStartAt(LocalDateTime.now().plusDays(1).withHour(1)) // 1일 후 오전 1시
+                            .reservationEndAt(LocalDateTime.now().plusDays(1).withHour(5)) // 1일 후 오전 5시
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+            );
+
+            theaterScheduleJpaRepository.saveAll(schedulesInsert);
+
+            // 10개의 좌석 생성
+            List<TheaterSeat> seats = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                seats.add(TheaterSeat.builder()
+                        .theaterScheduleId(schedulesInsert.get(0).getId())
+                        .number(i) // 좌석 번호 1~10
+                        .price(10000 + (i * 500)) // 가격 변동 (10,000 + 좌석 번호 * 500)
+                        .isReserved(false) // 기본적으로 예약되지 않은 상태
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+
+            // 저장
+            List<TheaterSeat> theaterSeats = theaterSeatJpaRepository.saveAll(seats);
+            Long theaterSeatId = theaterSeats.get(0).getId();
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processReservation(savedUser.getId(), theaterSeatId));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(THEATER_SCHEDULE_NOT_RESERVABLE);
+            assertThat(coreException.getMessage()).isEqualTo(THEATER_SCHEDULE_NOT_RESERVABLE.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 저장 실패 - 이미 예약된 영화관 좌석을 예매 하려는 경우")
+        public void shouldThrowExceptionWhenTheaterSeatIsNotAvailable() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+
+            createMovieData();
+
+            createTheaterData();
+
+            // 영화 A ID 조회
+            Long movieAId = movieJpaRepository.findAll().stream()
+                    .filter(movie -> movie.getTitle().equals("영화 A"))
+                    .map(Movie::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
+
+            // CGV 강남 & CGV 용산 ID 조회
+            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 강남"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
+
+            // TheaterSchedule 리스트 생성
+            List<TheaterSchedule> schedulesInsert = List.of(
+                    TheaterSchedule.builder()
+                            .movieId(movieAId)
+                            .theaterId(cgvGangnamId)
+                            .theaterScreenId(201L)
+                            .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
+                            .reservationStartAt(LocalDateTime.now().minusDays(1).withHour(1)) // 1일 전 오전 1시
+                            .reservationEndAt(LocalDateTime.now().plusDays(1).withHour(23)) // 1일 후 오후 11시
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+            );
+
+            theaterScheduleJpaRepository.saveAll(schedulesInsert);
+
+            // 10개의 좌석 생성
+            List<TheaterSeat> seats = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                seats.add(TheaterSeat.builder()
+                        .theaterScheduleId(schedulesInsert.get(0).getId())
+                        .number(i) // 좌석 번호 1~10
+                        .price(10000 + (i * 500)) // 가격 변동 (10,000 + 좌석 번호 * 500)
+                        .isReserved(true) // 기본적으로 예약되지 않은 상태
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+
+            // 저장
+            List<TheaterSeat> theaterSeats = theaterSeatJpaRepository.saveAll(seats);
+            Long theaterSeatId = theaterSeats.get(0).getId();
+
+            // when
+            CoreException coreException = Assertions.assertThrows(CoreException.class, () -> theaterFacade.processReservation(savedUser.getId(), theaterSeatId));
+
+            // then
+            assertThat(coreException.getErrorType()).isEqualTo(THEATER_SEAT_ALREADY_RESERVED);
+            assertThat(coreException.getMessage()).isEqualTo(THEATER_SEAT_ALREADY_RESERVED.getMessage());
+        }
+
+        @Test
+        @DisplayName("영화 예매 내역 저장 성공")
+        public void shouldProcessReservation() throws Exception {
+            // given
+            User savedUser = userJpaRepository.save(User.builder().id(1L).name("user-1").build());
+
+            createMovieData();
+
+            createTheaterData();
+
+            // 영화 A ID 조회
+            Long movieAId = movieJpaRepository.findAll().stream()
+                    .filter(movie -> movie.getTitle().equals("영화 A"))
+                    .map(Movie::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("영화 A가 존재하지 않습니다."));
+
+            // CGV 강남 & CGV 용산 ID 조회
+            Long cgvGangnamId = theaterJpaRepository.findAll().stream()
+                    .filter(theater -> theater.getName().equals("CGV 강남"))
+                    .map(Theater::getId)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("CGV 강남이 존재하지 않습니다."));
+
+            // TheaterSchedule 리스트 생성
+            List<TheaterSchedule> schedulesInsert = List.of(
+                    TheaterSchedule.builder()
+                            .movieId(movieAId)
+                            .theaterId(cgvGangnamId)
+                            .theaterScreenId(201L)
+                            .movieAt(LocalDateTime.now().plusDays(1).withHour(10)) // 1일 후 오전 10시
+                            .reservationStartAt(LocalDateTime.now().minusDays(1).withHour(1)) // 1일 전 오전 1시
+                            .reservationEndAt(LocalDateTime.now().plusDays(1).withHour(23)) // 1일 후 오후 11시
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .build()
+            );
+
+            theaterScheduleJpaRepository.saveAll(schedulesInsert);
+
+            // 10개의 좌석 생성
+            List<TheaterSeat> seats = new ArrayList<>();
+            for (int i = 1; i <= 10; i++) {
+                seats.add(TheaterSeat.builder()
+                        .theaterScheduleId(schedulesInsert.get(0).getId())
+                        .number(i) // 좌석 번호 1~10
+                        .price(10000 + (i * 500)) // 가격 변동 (10,000 + 좌석 번호 * 500)
+                        .isReserved(false) // 기본적으로 예약되지 않은 상태
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
+            }
+
+            // 저장
+            List<TheaterSeat> theaterSeats = theaterSeatJpaRepository.saveAll(seats);
+            Long theaterSeatId = theaterSeats.get(0).getId();
+
+            // when
+            Reservation reservation = theaterFacade.processReservation(savedUser.getId(), theaterSeatId);
+
+            // then
+            assertThat(reservation.getTheaterSeatId()).isEqualTo(theaterSeatId);
+            assertThat(reservation.getUserId()).isEqualTo(savedUser.getId());
+            assertThat(reservation.getReservedAt()).isBefore(LocalDateTime.now());
+            assertThat(reservation.getStatus()).isEqualTo(WAITING);
         }
     }
 

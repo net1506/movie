@@ -6,6 +6,7 @@ import com.tdd.movie.interfaces.api.dto.TheaterScheduleControllerDto.GetAvailabl
 import com.tdd.movie.interfaces.api.dto.TheaterScheduleControllerDto.TheaterSeatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +20,7 @@ public class TheaterScheduleController {
 
     private final TheaterFacade theaterFacade;
 
-    @RequestMapping("/{theaterScheduleId}/available-seats")
+    @GetMapping("/{theaterScheduleId}/available-seats")
     public ResponseEntity<GetAvailableSeatsResponse> getAvailableSeats(@PathVariable Long theaterScheduleId) {
         List<TheaterSeat> reservableTheaterSeats = theaterFacade.getReservableTheaterSeats(theaterScheduleId);
         List<TheaterSeatResponse> responseList = reservableTheaterSeats.stream().map(TheaterSeatResponse::new).toList();

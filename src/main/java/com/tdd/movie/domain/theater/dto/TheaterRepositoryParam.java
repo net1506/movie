@@ -16,6 +16,18 @@ public class TheaterRepositoryParam {
 
     }
 
+    public record GetTheaterSeatByIdParam(
+            Long theaterSeatId
+    ) {
+
+    }
+
+    public record GetReservationByIdParam(
+            Long reservationId
+    ) {
+
+    }
+
     public record FindTheatersByIdsParam(
             List<Long> theaterIds
     ) {
