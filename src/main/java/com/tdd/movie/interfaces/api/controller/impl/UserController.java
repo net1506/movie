@@ -30,7 +30,7 @@ public class UserController implements IUserController {
     }
 
     @Override
-    @GetMapping("/{userId}/wallets/{walletId}/charge")
+    @PutMapping("/{userId}/wallets/{walletId}/charge")
     public ResponseEntity<GetWalletResponse> chargeWallet(
             @PathVariable Long userId,
             @PathVariable Long walletId,

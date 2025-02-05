@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.tdd.movie.interfaces.api.CommonHttpHeader.X_USER_ID;
-
 @RestController
 @RequestMapping("/api/v1/reservations")
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class ReservationController implements IReservationController {
     @PostMapping("/{reservationId}/payment")
     public ResponseEntity<ReservationControllerDto.PayReservationResponse> payReservation(
             @PathVariable Long reservationId,
-            @RequestHeader(X_USER_ID) Long userId
+            @RequestParam(name = "userId") Long userId
     ) {
         theaterFacade.processPayment(reservationId, userId);
         return null;
@@ -31,7 +29,7 @@ public class ReservationController implements IReservationController {
     @GetMapping("/{reservationId}")
     public ResponseEntity<UserControllerDto.GetWalletResponse> getReservation(
             @PathVariable Long reservationId,
-            @RequestHeader(X_USER_ID) Long userId
+            @RequestParam(name = "userId") Long userId
     ) {
         return null;
     }
