@@ -1,6 +1,7 @@
 package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.TheaterFacade;
+import com.tdd.movie.interfaces.api.CommonHttpHeader;
 import com.tdd.movie.interfaces.api.controller.IReservationController;
 import com.tdd.movie.interfaces.api.dto.ReservationControllerDto;
 import com.tdd.movie.interfaces.api.dto.UserControllerDto;
@@ -19,7 +20,7 @@ public class ReservationController implements IReservationController {
     @PostMapping("/{reservationId}/payment")
     public ResponseEntity<ReservationControllerDto.PayReservationResponse> payReservation(
             @PathVariable Long reservationId,
-            @RequestParam(name = "userId") Long userId
+            @RequestHeader(CommonHttpHeader.X_USER_ID) Long userId
     ) {
         theaterFacade.processPayment(reservationId, userId);
         return null;
@@ -29,7 +30,7 @@ public class ReservationController implements IReservationController {
     @GetMapping("/{reservationId}")
     public ResponseEntity<UserControllerDto.GetWalletResponse> getReservation(
             @PathVariable Long reservationId,
-            @RequestParam(name = "userId") Long userId
+            @RequestHeader(CommonHttpHeader.X_USER_ID) Long userId
     ) {
         return null;
     }

@@ -1,6 +1,7 @@
 package com.tdd.movie.interfaces.api.controller.impl;
 
 import com.tdd.movie.application.TheaterFacade;
+import com.tdd.movie.interfaces.api.CommonHttpHeader;
 import com.tdd.movie.interfaces.api.controller.ITheaterSeatController;
 import com.tdd.movie.interfaces.api.dto.TheaterSeatControllerDto.ReservationResponse;
 import com.tdd.movie.interfaces.api.dto.TheaterSeatControllerDto.ReserveSeatResponse;
@@ -19,7 +20,7 @@ public class TheaterSeatController implements ITheaterSeatController {
     @PostMapping("/{theaterSeatId}/reservation")
     public ResponseEntity<ReserveSeatResponse> reserveSeat(
             @PathVariable Long theaterSeatId,
-            @RequestParam(name = "userId") Long userId
+            @RequestHeader(CommonHttpHeader.X_USER_ID) Long userId
     ) {
         ReservationResponse response = new ReservationResponse(theaterFacade.processReservation(userId, theaterSeatId));
         return ResponseEntity.ok(new ReserveSeatResponse(response));
