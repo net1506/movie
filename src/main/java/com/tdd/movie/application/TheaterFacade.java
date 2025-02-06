@@ -19,7 +19,7 @@ import com.tdd.movie.domain.theater.model.TheaterSeat;
 import com.tdd.movie.domain.theater.service.TheaterCommandService;
 import com.tdd.movie.domain.theater.service.TheaterQueryService;
 import com.tdd.movie.domain.user.dto.UserQuery.GetUserByIdQuery;
-import com.tdd.movie.domain.user.dto.UserQuery.GetUserWalletByIdQuery;
+import com.tdd.movie.domain.user.dto.UserQuery.GetWalletByUserIdQuery;
 import com.tdd.movie.domain.user.model.User;
 import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.domain.user.service.UserQueryService;
@@ -147,7 +147,7 @@ public class TheaterFacade {
         TheaterSeat theaterSeat = theaterQueryService.getTheaterSeat(new GetTheaterSeatByIdQuery(reservation.getTheaterSeatId()));
         Integer price = theaterSeat.getPrice(); // 결제 금액
 
-        Wallet wallet = userQueryService.getWallet(new GetUserWalletByIdQuery(userId));
+        Wallet wallet = userQueryService.getWallet(new GetWalletByUserIdQuery(userId));
         // 잔액 여부 확인 및 결재 처리
         wallet.use(price);
 
