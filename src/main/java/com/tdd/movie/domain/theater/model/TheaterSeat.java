@@ -4,6 +4,7 @@ import com.tdd.movie.domain.common.base.BaseEntity;
 import com.tdd.movie.domain.support.error.CoreException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ public class TheaterSeat extends BaseEntity {
     private Integer number;
     private Integer price;
     private Boolean isReserved;
+    @Version
+    private Long version; // 같은 좌석을 두 개 이상의 트랜잭션이 동시에 업데이트하려 할 때 ObjectOptimisticLockingFailureException 가 발생함.
 
     @Builder
     public TheaterSeat(Long id, Long theaterScheduleId, Integer number, Integer price, Boolean isReserved, LocalDateTime createdAt, LocalDateTime updatedAt) {

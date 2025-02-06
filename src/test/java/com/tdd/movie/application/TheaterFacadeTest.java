@@ -562,9 +562,11 @@ class TheaterFacadeTest {
             Long theaterSeatId = theaterSeats.get(0).getId();
 
             // when
+            TheaterSeat theaterSeat = theaterSeatJpaRepository.findById(theaterSeatId).orElse(null);
             Reservation reservation = theaterFacade.processReservation(savedUser.getId(), theaterSeatId);
 
             // then
+            assertThat(theaterSeat.getIsReserved()).isTrue();
             assertThat(reservation.getTheaterSeatId()).isEqualTo(theaterSeatId);
             assertThat(reservation.getUserId()).isEqualTo(savedUser.getId());
             assertThat(reservation.getReservedAt()).isBefore(LocalDateTime.now());

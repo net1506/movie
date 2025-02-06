@@ -4,9 +4,12 @@ import com.tdd.movie.domain.support.error.CoreException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import static com.tdd.movie.domain.support.error.ErrorType.OPTIMISTIC_LOCK_CONFLICT;
 
 @Slf4j
 @RestControllerAdvice
@@ -34,6 +37,12 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
                 ),
                 status
         );
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT) // 409 Conflict
+                .body(new ErrorResponse(OPTIMISTIC_LOCK_CONFLICT.name(), OPTIMISTIC_LOCK_CONFLICT.getMessage()));
     }
 
     @ExceptionHandler(value = Exception.class)

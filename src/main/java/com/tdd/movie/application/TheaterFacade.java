@@ -8,6 +8,7 @@ import com.tdd.movie.domain.payment.dto.PaymentQuery.GetPaymentByIdQuery;
 import com.tdd.movie.domain.payment.model.Payment;
 import com.tdd.movie.domain.payment.service.PaymentCommandService;
 import com.tdd.movie.domain.payment.service.PaymentQueryService;
+import com.tdd.movie.domain.support.annotaion.DistributedLock;
 import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
 import com.tdd.movie.domain.theater.dto.TheaterQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.*;
@@ -24,11 +25,15 @@ import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.tdd.movie.domain.support.DistributedLockType.USER_WALLET;
+
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TheaterFacade {
 
     private final UserQueryService userQueryService;
@@ -38,7 +43,9 @@ public class TheaterFacade {
     private final TheaterQueryService theaterQueryService;
 
     private final TheaterCommandService theaterCommandService;
+
     private final PaymentCommandService paymentCommandService;
+
     private final PaymentQueryService paymentQueryService;
 
 
@@ -97,6 +104,7 @@ public class TheaterFacade {
      *
      * @return Reservation 객체
      */
+    @Transactional
     public Reservation processReservation(Long userId, Long theaterSeatId) {
         User user = userQueryService.getUser(new GetUserByIdQuery(userId));
 
@@ -124,6 +132,8 @@ public class TheaterFacade {
      *
      * @return Payment 객체
      */
+    @DistributedLock(type = USER_WALLET, keys = "userId")
+    @Transactional
     public Payment processPayment(Long reservationId, Long userId) {
         User user = userQueryService.getUser(new GetUserByIdQuery(userId));
         Reservation reservation = theaterQueryService.getReservation(new GetReservationByIdQuery(reservationId));
