@@ -3,6 +3,7 @@ package com.tdd.movie.domain.theater.model;
 import com.tdd.movie.domain.common.base.BaseEntity;
 import com.tdd.movie.domain.support.error.CoreException;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,9 @@ import static com.tdd.movie.domain.theater.model.ReservationStatus.CANCELED;
 import static com.tdd.movie.domain.theater.model.ReservationStatus.CONFIRMED;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservations", indexes = {
+        @Index(name = "idx_user_seat", columnList = "userId, theaterSeatId")
+})
 @NoArgsConstructor
 @Getter
 public class Reservation extends BaseEntity {

@@ -3,6 +3,7 @@ package com.tdd.movie.domain.theater.model;
 import com.tdd.movie.domain.common.base.BaseEntity;
 import com.tdd.movie.domain.support.error.CoreException;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,10 @@ import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_SCHED
 import static java.time.LocalDateTime.now;
 
 @Entity
-@Table(name = "theater_schedules")
+@Table(name = "theater_schedules", indexes = {
+        @Index(name = "idx_movie_theater", columnList = "movieId, theaterId"),
+        @Index(name = "idx_reservation_period", columnList = "reservationStartAt, reservationEndAt")
+})
 @NoArgsConstructor
 @Getter
 public class TheaterSchedule extends BaseEntity {

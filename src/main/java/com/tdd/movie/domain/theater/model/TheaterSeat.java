@@ -3,6 +3,7 @@ package com.tdd.movie.domain.theater.model;
 import com.tdd.movie.domain.common.base.BaseEntity;
 import com.tdd.movie.domain.support.error.CoreException;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.Builder;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_SEAT_ALREADY_RESERVED;
 
 @Entity
-@Table(name = "theater_seats")
+@Table(name = "theater_seats", indexes = {
+        @Index(name = "idx_schedule_reserved", columnList = "theaterScheduleId, isReserved")
+})
 @NoArgsConstructor
 @Getter
 public class TheaterSeat extends BaseEntity {
