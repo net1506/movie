@@ -9,7 +9,9 @@ import com.tdd.movie.domain.payment.model.Payment;
 import com.tdd.movie.domain.payment.service.PaymentCommandService;
 import com.tdd.movie.domain.payment.service.PaymentQueryService;
 import com.tdd.movie.domain.support.annotaion.DistributedLock;
+import com.tdd.movie.domain.theater.dto.TheaterCommand.CancelReservationsByIdsCommand;
 import com.tdd.movie.domain.theater.dto.TheaterCommand.CreateReservationCommand;
+import com.tdd.movie.domain.theater.dto.TheaterCommand.ReleaseTheaterSeatsByIdsCommand;
 import com.tdd.movie.domain.theater.dto.TheaterQuery;
 import com.tdd.movie.domain.theater.dto.TheaterQuery.*;
 import com.tdd.movie.domain.theater.model.Reservation;
@@ -157,5 +159,32 @@ public class TheaterFacade {
         Long paymentId = paymentCommandService.createPayment(new CreatePaymentCommand(reservationId, userId, price));
 
         return paymentQueryService.getPayment(new GetPaymentByIdQuery(paymentId));
+    }
+
+    @Transactional
+    public void expireReservations() {
+        // 현재 시간 기준 만료된 예약 건에 대해서 조회를 한다.
+        // RESERVATION_EXPIRATION_MINUTES(5분) 이 지나도 결재가 되지 않는 예약 목록 건을 조회
+        List<Reservation> expiredReservations = theaterQueryService.findAllExpiredReservations(
+                new FindAllExpiredReservationsWithLockQuery()
+        );
+
+        // 없으면 그냥 함수 종료
+        if (expiredReservations.isEmpty()) {
+            return;
+        }
+
+        // 만료된 예약 건에 대한 좌석 아이디 목록 리스트
+        List<Long> theaterSeatIds = expiredReservations.stream()
+                .map(Reservation::getTheaterSeatId)
+                .toList();
+        // 만료된 예약 건에 대한 예약 아이디 목록 리스트
+        List<Long> reservationIds = expiredReservations.stream()
+                .map(Reservation::getId)
+                .toList();
+        // 좌석을 취소한다.
+        theaterCommandService.releaseConcertSeats(new ReleaseTheaterSeatsByIdsCommand(theaterSeatIds));
+        // 예약을 취소한다.
+        theaterCommandService.cancelReservations(new CancelReservationsByIdsCommand(reservationIds));
     }
 }

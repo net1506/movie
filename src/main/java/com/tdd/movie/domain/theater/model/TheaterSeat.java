@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_SEAT_ALREADY_RESERVED;
+import static com.tdd.movie.domain.support.error.ErrorType.Theater.THEATER_SEAT_NOT_RESERVED;
 
 @Entity
 @Table(name = "theater_seats", indexes = {
@@ -43,5 +44,14 @@ public class TheaterSeat extends BaseEntity {
         }
 
         this.isReserved = true;
+    }
+
+    // 좌석 예매 취소
+    public void release() {
+        if (!this.isReserved) {
+            throw new CoreException(THEATER_SEAT_NOT_RESERVED);
+        }
+
+        this.isReserved = false;
     }
 }

@@ -50,6 +50,9 @@ public class TheaterQuery {
         }
     }
 
+    public record FindAllExpiredReservationsWithLockQuery() {
+    }
+
     public record FindTheatersByIdsQuery(
             List<Long> theaterIds
     ) {

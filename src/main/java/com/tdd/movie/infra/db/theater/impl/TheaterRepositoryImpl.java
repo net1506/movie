@@ -1,14 +1,12 @@
 package com.tdd.movie.infra.db.theater.impl;
 
-import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam;
-import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSeatsByScheduleIdAndIsReservedParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindDistinctTheaterIdsByMovieIdParam;
 import com.tdd.movie.domain.support.error.CoreException;
+import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.*;
 import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.domain.theater.model.TheaterSeat;
-import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.*;
 import com.tdd.movie.domain.theater.repository.TheaterRepository;
 import com.tdd.movie.infra.db.theater.ReservationJpaRepository;
 import com.tdd.movie.infra.db.theater.TheaterJpaRepository;
@@ -84,5 +82,25 @@ public class TheaterRepositoryImpl implements TheaterRepository {
                 param.theaterScheduleId(),
                 param.isReserved()
         );
+    }
+
+    // 만료된 예약건에 대한 목록을 조회한다.
+    @Override
+    public List<Reservation> findAllReservations(
+            FindAllReservationsByStatusAndReservedAtBeforeWithLockParam param) {
+        return reservationJpaRepository.findAllByStatusAndReservedAtBefore(
+                param.status(),
+                param.expiredAt()
+        );
+    }
+
+    @Override
+    public List<Reservation> findAllReservations(FindAllReservationsByIdsWithLockParam param) {
+        return reservationJpaRepository.findAllByIdsWithLock(param.reservationIds());
+    }
+
+    @Override
+    public List<TheaterSeat> findAllTheaterSeats(FindAllTheaterSeatsByIdsWithLockParam param) {
+        return theaterSeatJpaRepository.findAllByIdsWithLock(param.theaterSeatIds());
     }
 }

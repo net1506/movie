@@ -56,7 +56,29 @@ public class Reservation extends BaseEntity {
         }
     }
 
+    // 예약 하기
     public void confirm() {
+        if (status == CONFIRMED) {
+            throw new CoreException(RESERVATION_ALREADY_PAID);
+        }
+
+        if (status == CANCELED) {
+            throw new CoreException(RESERVATION_ALREADY_CANCELED);
+        }
+
         this.status = CONFIRMED;
+    }
+
+    // 취소하기
+    public void cancel() {
+        if (status == CANCELED) {
+            throw new CoreException(RESERVATION_ALREADY_CANCELED);
+        }
+
+        if (status == CONFIRMED) {
+            throw new CoreException(RESERVATION_ALREADY_PAID);
+        }
+
+        this.status = CANCELED;
     }
 }

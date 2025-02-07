@@ -1,13 +1,11 @@
 package com.tdd.movie.domain.theater.repository;
 
-import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam;
-import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindAllTheaterSeatsByScheduleIdAndIsReservedParam;
 import com.tdd.movie.domain.movie.dto.MovieRepositoryParam.FindDistinctTheaterIdsByMovieIdParam;
+import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.*;
 import com.tdd.movie.domain.theater.model.Reservation;
 import com.tdd.movie.domain.theater.model.Theater;
 import com.tdd.movie.domain.theater.model.TheaterSchedule;
 import com.tdd.movie.domain.theater.model.TheaterSeat;
-import com.tdd.movie.domain.theater.dto.TheaterRepositoryParam.*;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
@@ -34,4 +32,11 @@ public interface TheaterRepository {
     Reservation getReservation(GetReservationByIdParam query);
 
     List<TheaterSeat> findAllTheaterSeats(FindAllTheaterSeatsByScheduleIdAndIsReservedParam param);
+
+    List<TheaterSeat> findAllTheaterSeats(FindAllTheaterSeatsByIdsWithLockParam param);
+
+    List<Reservation> findAllReservations(FindAllReservationsByStatusAndReservedAtBeforeWithLockParam param);
+
+    List<Reservation> findAllReservations(FindAllReservationsByIdsWithLockParam param);
+
 }
