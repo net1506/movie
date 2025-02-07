@@ -105,4 +105,11 @@ public class WaitingQueueRedisRepository implements WaitingQueueRepository {
     public void removeActiveToken(WaitingQueueRepositoryParam.RemoveActiveTokenParam param) {
         redisTemplate.opsForZSet().remove(activeQueueKey, param.uuid());
     }
+
+    @Override
+    public void removeExpiredWaitingQueues(long expirationThreshold) {
+        // 생성된 지 1일이 지난 대기열 토큰 조회 및 제거
+        redisTemplate.opsForZSet().removeRangeByScore(waitingQueueKey, 0, expirationThreshold);
+    }
+
 }

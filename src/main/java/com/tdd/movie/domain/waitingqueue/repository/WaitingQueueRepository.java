@@ -26,4 +26,6 @@ public interface WaitingQueueRepository {
 
     // 활성화된 토큰 제거
     void removeActiveToken(RemoveActiveTokenParam param);
+
+    void removeExpiredWaitingQueues(long expirationThreshold);
 }

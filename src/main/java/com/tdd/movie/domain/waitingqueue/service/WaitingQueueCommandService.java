@@ -1,14 +1,14 @@
 package com.tdd.movie.domain.waitingqueue.service;
 
 import com.tdd.movie.domain.waitingqueue.dto.WaitingQueueCommand.ActivateWaitingQueuesCommand;
-import com.tdd.movie.domain.waitingqueue.dto.WaitingQueueCommand.ExpireActivatedWaitingQueueCommand;
 import com.tdd.movie.domain.waitingqueue.dto.WaitingQueueRepositoryParam.ActivateWaitingQueuesParam;
-import com.tdd.movie.domain.waitingqueue.dto.WaitingQueueRepositoryParam.RemoveActiveTokenParam;
 import com.tdd.movie.domain.waitingqueue.repository.WaitingQueueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import static com.tdd.movie.domain.waitingqueue.WaitingQueueConstants.WAITING_QUEUE_EXPIRE_MINUTES;
@@ -36,8 +36,11 @@ public class WaitingQueueCommandService {
         );
     }
 
-    public void removeActiveToken(ExpireActivatedWaitingQueueCommand command) {
-        waitingQueueRepository.removeActiveToken(
-                new RemoveActiveTokenParam(command.uuid()));
+    public void expireOldWaitingQueues(Long seconds) {
+        long currentTimestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        long expirationThreshold = currentTimestamp - seconds;
+
+        // 1일 이상 경과한 대기열 토큰 제거
+        waitingQueueRepository.removeExpiredWaitingQueues(expirationThreshold);
     }
 }

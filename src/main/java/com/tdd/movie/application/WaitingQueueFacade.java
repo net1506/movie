@@ -44,4 +44,10 @@ public class WaitingQueueFacade {
         waitingQueueCommandService.activateWaitingQueues(
                 new ActivateWaitingQueuesCommand(ADD_PROCESSING_COUNT));
     }
+
+    @Transactional
+    public void expireOldWaitingQueues() {
+        // 1일 (86400초) 이전 타임스탬프
+        waitingQueueCommandService.expireOldWaitingQueues(86400L);
+    }
 }
