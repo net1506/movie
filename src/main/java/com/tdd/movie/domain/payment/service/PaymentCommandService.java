@@ -14,14 +14,14 @@ public class PaymentCommandService {
 
     private final PaymentRepository paymentRepository;
 
-    public Payment createPayment(CreatePaymentCommand command) {
+    public Long createPayment(CreatePaymentCommand command) {
         Payment payment = Payment.builder()
                 .reservationId(command.reservationId())
                 .userId(command.userId())
                 .amount(command.amount())
                 .build();
 
-        return paymentRepository.savePayment(payment);
+        return paymentRepository.savePayment(payment).getId();
     }
 
 }

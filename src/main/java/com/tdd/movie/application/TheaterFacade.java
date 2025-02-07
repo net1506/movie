@@ -154,8 +154,8 @@ public class TheaterFacade {
         reservation.confirm();
 
         // 결재 내역을 저장한다.
-        Payment payment = paymentCommandService.createPayment(new CreatePaymentCommand(reservationId, userId, price));
+        Long paymentId = paymentCommandService.createPayment(new CreatePaymentCommand(reservationId, userId, price));
 
-        return paymentQueryService.getPayment(new GetPaymentByIdQuery(payment.getId()));
+        return paymentQueryService.getPayment(new GetPaymentByIdQuery(paymentId));
     }
 }
