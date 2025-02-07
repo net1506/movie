@@ -34,8 +34,8 @@ public class TheaterRepositoryImpl implements TheaterRepository {
     }
 
     @Override
-    public Theater getTheater(GetTheaterByIdParam query) {
-        return theaterJpaRepository.findById(query.theaterId())
+    public Theater getTheater(GetTheaterByIdParam param) {
+        return theaterJpaRepository.findById(param.theaterId())
                 .orElseThrow(() -> new CoreException(THEATER_NOT_FOUND));
     }
 
@@ -50,8 +50,8 @@ public class TheaterRepositoryImpl implements TheaterRepository {
     }
 
     @Override
-    public TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam query) {
-        return theaterScheduleJpaRepository.findById(query.theaterScheduleId())
+    public TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam param) {
+        return theaterScheduleJpaRepository.findById(param.theaterScheduleId())
                 .orElseThrow(() -> new CoreException(THEATER_SCHEDULE_ID_MUST_NOT_BE_NULL));
     }
 

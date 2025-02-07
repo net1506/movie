@@ -11,25 +11,28 @@ import org.springframework.cache.annotation.Cacheable;
 import java.util.List;
 
 import static com.tdd.movie.domain.support.CacheName.THEATER;
+import static com.tdd.movie.domain.support.CacheName.THEATER_SCHEDULE;
 
 public interface TheaterRepository {
 
     Reservation saveReservation(Reservation reservation);
 
-    @Cacheable(value = THEATER, key = "#query.theaterId")
-    Theater getTheater(GetTheaterByIdParam query);
+    @Cacheable(value = THEATER, key = "#param.theaterId")
+    Theater getTheater(GetTheaterByIdParam param);
 
     List<Theater> findTheaters(FindTheatersByIdsParam param);
 
     List<Long> findDistinctTheaterIds(FindDistinctTheaterIdsByMovieIdParam param);
 
-    TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam query);
+    // 콘서트 스케쥴 정보 조회
+    @Cacheable(value = THEATER_SCHEDULE, key = "#param.theaterScheduleId")
+    TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam param);
 
     List<TheaterSchedule> findAllTheaterSchedules(FindAllTheaterSchedulesByTheaterIdAndMovieIdAndNowParam param);
 
-    TheaterSeat getTheaterSeat(GetTheaterSeatByIdParam query);
+    TheaterSeat getTheaterSeat(GetTheaterSeatByIdParam param);
 
-    Reservation getReservation(GetReservationByIdParam query);
+    Reservation getReservation(GetReservationByIdParam param);
 
     List<TheaterSeat> findAllTheaterSeats(FindAllTheaterSeatsByScheduleIdAndIsReservedParam param);
 
