@@ -1,7 +1,7 @@
 package com.tdd.movie.interfaces.api.controller;
 
+import com.tdd.movie.interfaces.api.dto.ReservationControllerDto.GetReservationResponse;
 import com.tdd.movie.interfaces.api.dto.ReservationControllerDto.PayReservationResponse;
-import com.tdd.movie.interfaces.api.dto.UserControllerDto.GetWalletResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +19,7 @@ public interface IReservationController {
     );
 
     @Operation(summary = "영화관 예매 내역 조회", description = "영화관 예매 내역을 조회 합니다.")
-    ResponseEntity<GetWalletResponse> getReservation(
+    ResponseEntity<GetReservationResponse> getReservation(
             @Schema(description = "영화관 예매 내역 ID", example = "1")
             Long reservationId,
             @Schema(description = "사용자 ID", example = "1")
