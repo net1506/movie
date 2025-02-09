@@ -19,7 +19,7 @@
 ## 패키지 구조
 
 ```
-com.example.hhpb.concert/
+com.example.tdd.movie/
 ├── interface/                                      # 인터페이스 계층
 │   ├── api/                                        # API 계층
 │   │   ├── filter/                                 # 필터

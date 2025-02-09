@@ -1,6 +1,6 @@
 spring:
   server:
-    port: 8081
+    port: 8080
   h2:
     console:
       enabled: true
@@ -27,6 +27,28 @@ spring:
       port: 6379
   cache:
     type: redis
+  kafka:
+    template:
+      default-topic: my-topic
+    bootstrap-servers: 127.0.0.1:10000,127.0.0.1:10001,127.0.0.1:10002
+    properties:
+      retry.backoff.ms: 5000
+      request.timeout.ms: 30000
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: my-group #  Kafka Consumer 그룹 ID (같은 그룹이면 같은 메시지를 공유)
+      enable-auto-commit: false
+      auto-offset-reset: latest # 메시지 소비 시작 위치 설정 (가장 오래된 메시지부터 처리)
+      properties:
+        max.poll.interval.ms: 600000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+queue:
+  waiting-key: ${QUEUE_WAITING_KEY:waiting}
+  active-key: ${QUEUE_ACTIVE_KEY:active}
 
 logging:
   level:

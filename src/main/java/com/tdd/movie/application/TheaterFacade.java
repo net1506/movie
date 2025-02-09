@@ -1,10 +1,13 @@
 package com.tdd.movie.application;
 
+import com.tdd.movie.domain.event.dto.OutboxEventCommand.CreateOutboxEventCommand;
+import com.tdd.movie.domain.event.service.OutboxEventCommandService;
 import com.tdd.movie.domain.movie.dto.MovieQuery.GetMovieByIdQuery;
 import com.tdd.movie.domain.movie.model.Movie;
 import com.tdd.movie.domain.movie.service.MovieQueryService;
 import com.tdd.movie.domain.payment.dto.PaymentCommand.CreatePaymentCommand;
 import com.tdd.movie.domain.payment.dto.PaymentQuery.GetPaymentByIdQuery;
+import com.tdd.movie.domain.payment.event.PaymentSuccessEvent;
 import com.tdd.movie.domain.payment.model.Payment;
 import com.tdd.movie.domain.payment.service.PaymentCommandService;
 import com.tdd.movie.domain.payment.service.PaymentQueryService;
@@ -26,6 +29,7 @@ import com.tdd.movie.domain.user.model.User;
 import com.tdd.movie.domain.user.model.Wallet;
 import com.tdd.movie.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,7 @@ import java.util.List;
 
 import static com.tdd.movie.domain.support.DistributedLockType.USER_WALLET;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -49,6 +54,8 @@ public class TheaterFacade {
     private final PaymentCommandService paymentCommandService;
 
     private final PaymentQueryService paymentQueryService;
+
+    private final OutboxEventCommandService outboxEventCommandService;
 
 
     /**
@@ -99,6 +106,14 @@ public class TheaterFacade {
                         false
                 )
         );
+    }
+
+    public Reservation getReservation(Long reservationId, Long userId) {
+        User user = userQueryService.getUser(new GetUserByIdQuery(userId));
+        Reservation reservation = theaterQueryService.getReservation(new GetReservationByIdQuery(reservationId));
+        reservation.validateReservationOwner(user.getId());
+        
+        return reservation;
     }
 
     /**
@@ -157,6 +172,13 @@ public class TheaterFacade {
 
         // 결재 내역을 저장한다.
         Long paymentId = paymentCommandService.createPayment(new CreatePaymentCommand(reservationId, userId, price));
+
+        log.info("PaymentSuccessEvent publish");
+
+        outboxEventCommandService.createOutboxEvent(
+                new CreateOutboxEventCommand(new PaymentSuccessEvent(paymentId)));
+
+        log.info("PaymentSuccessEvent published");
 
         return paymentQueryService.getPayment(new GetPaymentByIdQuery(paymentId));
     }
