@@ -1,4 +1,4 @@
-# 영화 예약 서비스
+# 영화 예매 서비스
 
 - [프로젝트 구조](./docs/PROJECT_STRUCTURE.md)
 - [요구사항 분석](./docs/REQUIREMENT.md)
