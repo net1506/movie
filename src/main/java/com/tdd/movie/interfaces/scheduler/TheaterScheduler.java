@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TheaterScheduler {
 
-    TheaterFacade theaterFacade;
+    private final TheaterFacade theaterFacade;
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional
