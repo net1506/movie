@@ -24,7 +24,7 @@ public interface TheaterRepository {
 
     List<Long> findDistinctTheaterIds(FindDistinctTheaterIdsByMovieIdParam param);
 
-    // 콘서트 스케쥴 정보 조회
+    // 영화관 스케쥴 정보 조회
     @Cacheable(value = THEATER_SCHEDULE, key = "#param.theaterScheduleId")
     TheaterSchedule getTheaterSchedule(GetTheaterScheduleByIdParam param);
 

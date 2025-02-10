@@ -86,7 +86,7 @@ class TheaterFacadeConcurrencyTest {
     }
 
     @Nested
-    @DisplayName("콘서트 좌석 예약 동시성 테스트")
+    @DisplayName("영화관 좌석 예약 동시성 테스트")
     class ReserveSeatConcurrencyTest {
 
         @Nested
@@ -176,7 +176,7 @@ class TheaterFacadeConcurrencyTest {
     class PayReservationConcurrencyTest {
 
         @Nested
-        @DisplayName("콘서트 좌석 예약 내역 결제 동시성 테스트 분산락")
+        @DisplayName("영화관 좌석 예약 내역 결제 동시성 테스트 분산락")
         class PayReservationWithDistributedLock {
 
             @Test
@@ -186,7 +186,7 @@ class TheaterFacadeConcurrencyTest {
                 // given
                 final int threadCount = 1000;
 
-                // 콘서트 스케쥴 생성
+                // 영화관 스케쥴 생성
                 TheaterSchedule theaterSchedule = theaterScheduleJpaRepository.save(
                         TheaterSchedule.builder()
                                 .theaterId(1L)
@@ -196,7 +196,7 @@ class TheaterFacadeConcurrencyTest {
                                 .build()
                 );
 
-                // 콘서트 좌석 생성
+                // 영화관 좌석 생성
                 TheaterSeat theaterSeat = theaterSeatJpaRepository.save(
                         TheaterSeat.builder()
                                 .theaterScheduleId(theaterSchedule.getId())
@@ -213,7 +213,7 @@ class TheaterFacadeConcurrencyTest {
                 Wallet userWallet = walletJpaRepository.save(
                         Wallet.builder().userId(user.getId()).amount(10000).build());
 
-                // 콘서트 예약 내역 생성
+                // 영화관 예약 내역 생성
                 Reservation reservation = reservationJpaRepository.save(
                         Reservation.builder()
                                 .theaterSeatId(theaterSeat.getId()) // 생성했던 좌석
@@ -227,7 +227,7 @@ class TheaterFacadeConcurrencyTest {
                 final List<CompletableFuture<Void>> futures = IntStream.range(0, threadCount)
                         .mapToObj(i -> CompletableFuture.runAsync(() -> {
                             try {
-                                // 100 번 동시에 같은 콘서트 예매 내역에 대해서 결재를 시도
+                                // 100 번 동시에 같은 영화관 예매 내역에 대해서 결재를 시도
                                 theaterFacade.processPayment(reservation.getId(), user.getId());
                             } catch (CoreException e) {
                                 if (e.getErrorType().equals(RESERVATION_ALREADY_PAID)) {

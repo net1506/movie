@@ -21,7 +21,7 @@ public class WaitingQueueValidationInterceptor implements HandlerInterceptor {
     private final WaitingQueueFacade waitingQueueFacade;
 
     /**
-     * 콘서트 예약 관련 요청이 실행되기 전에 대기열(Waiting Queue) 검증을 수행하는 역할
+     * 영화관 예약 관련 요청이 실행되기 전에 대기열(Waiting Queue) 검증을 수행하는 역할
      * 대기열 토큰(UUID)이 있는지 확인하고 해당 토큰이 ACTIVE 상태인지 확인한다.
      */
     @Override
